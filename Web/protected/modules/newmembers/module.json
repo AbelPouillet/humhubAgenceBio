@@ -1,0 +1,21 @@
+{
+  "id": "newmembers",
+  "name": "New Members Widget",
+  "description": "    \"keywords\": [\"new\", \"members\", \"widget\", \"dashboard\"],\n",
+  "keywords": [
+    "new",
+    "members",
+    "widget",
+    "dashboard"
+  ],
+  "authors": [
+    {
+      "name": "Andreas Strobel"
+    }
+  ],
+  "homepage": "https://github.com/humhub-contrib/newmembers",
+  "version": "1.0.2",
+  "humhub": {
+    "minVersion": "1.4"
+  }
+}
