@@ -1,0 +1,58 @@
+version: '2'
+services:
+  php:
+    container_name: humhubAgenceBio
+    image: apouillet/humhub_cet:dev
+    volumes:
+      - ~/.composer-docker/cache:/root/.composer/cache:delegated
+      - ./:/app:delegated
+    depends_on:
+      - mysql
+    ports:
+      - '9081:80'
+  mysql:
+    container_name: mysqlAgenceBio
+    image: mysql:5.7.36
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes:
+      # Use Backup 
+      - ./mysql/mysql-dump/humhub_dump:/docker-entrypoint-initdb.d
+      - ./mysql/mysql-data/humhubBackup:/var/lib/mysql
+      - ./mysql/mysql-data/import-csv:/var/lib/mysql-files
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+      MYSQL_DATABASE: humhub_prod_db
+    ports:
+      - '4304:3306'
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 9082:80
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=mysql
+  mysql-workbench:
+    image: lscr.io/linuxserver/mysql-workbench:latest
+    container_name: mysql-workbenchAgenceBio
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+    volumes:
+      - ./mysql/mysql-schema:/config
+    ports:
+      - 4000:3000
+    cap_add:
+      - IPC_LOCK
+    restart: unless-stopped
+  adminCrud:
+    image: yiisoftware/yii2-php:7.4-apache
+    volumes:
+      - ~/.composer-docker/cache:/root/.composer/cache:delegated
+      - ./adminCrud:/app:delegated
+    ports:
+      - '9080:80'
