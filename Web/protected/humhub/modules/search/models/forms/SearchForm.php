@@ -29,8 +29,8 @@ class SearchForm extends Model
     public $scope = '';
     public $page = 1;
     public $limitSpaceGuids = [];
-    public $limitTypesIds = [];
-
+    public $limitActivitesIds = [];
+    public $limitCategoriesIds = [];
     public $limitCommunesIds = [];
 
     public $distanceRecherche = 10;
@@ -53,7 +53,7 @@ class SearchForm extends Model
     public function rules()
     {
         return [
-            [['keyword', 'scope', 'page', 'limitSpaceGuids', 'limitTypesIds', 'limitCommunesIds', 'distanceRecherche', 'isCertifier', 'startDatetime', 'endDatetime'], 'safe']
+            [['keyword', 'scope', 'page', 'limitSpaceGuids', 'limitActivitesIds', 'limitCategoriesIds', 'limitCommunesIds', 'distanceRecherche', 'isCertifier', 'startDatetime', 'endDatetime'], 'safe']
         ];
     }
 

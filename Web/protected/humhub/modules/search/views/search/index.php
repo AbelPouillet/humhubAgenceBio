@@ -19,6 +19,7 @@ use humhub\modules\search\interfaces\Searchable;
 use humhub\modules\cetcalModule\widgets\MapView;
 use humhub\modules\cet_commune\widgets\CommunePickerField;
 use humhub\modules\cet_entite\models\Entite;
+use kartik\select2\Select2;
 
 humhub\modules\stream\assets\StreamAsset::register($this);
 
@@ -54,8 +55,13 @@ humhub\modules\stream\assets\StreamAsset::register($this);
             $('#search-settings-link i').removeClass('fa-caret-down');
             $('#search-settings-link i').addClass('fa-caret-right');
         });
-
-
+        //cache misére sur les clefs select2
+        $('.field-searchform-limitactivitesids').on('click', function() {
+            $('.select2-results__group').css('display', 'none');
+        });
+        $('.field-searchform-limitcategoriesids').on('click', function() {
+            $('.select2-results__group').css('display', 'none');
+        })
         $('#commune_filter').on("change", function() {
             setTimeout(
                 function() {
@@ -100,20 +106,38 @@ humhub\modules\stream\assets\StreamAsset::register($this);
 
                             <div class="text-center">
                                 <a data-toggle="collapse" id="search-settings-link" href="#collapse-search-settings" style="font-size: 11px;">
-                                    <i class="fa fa-caret-right"></i> <?= Yii::t('SearchModule.base', 'Advanced search settings') ?>
+                                    <i class="fa fa-caret-right"></i>
+                                    <?= Yii::t('SearchModule.base', 'Advanced search settings') ?>
                                 </a>
                             </div>
 
                             <div id="collapse-search-settings" class="panel-collapse collapse">
                                 <br>
                                 <label class="control-label">Rechercher uniquement certains types d'Entités:</label>
-                                <?= "TODO Pickers"; /*TypePickerField::widget([
-                                    'id' => 'type_filter',
-                                    'model' => $model,
-                                    'attribute' => 'limitTypesIds',
-                                    'selection' => $limitTypes,
-                                    'placeholder' => "Préciser vos types",
-                                ])*/
+                                <?= $form->field($model, 'limitActivitesIds')->widget(Select2::classname(), [
+                                    'data' => $dataActivites,
+                                    'language' => 'fr',
+                                    'options' => ['placeholder' => 'Activitée(s) ...'],
+                                    'pluginOptions' => [
+                                        'multiple' => true,
+                                        'allowClear' => true,
+                                        'value' => $valueActivites,
+
+                                    ],
+                                ])->label(false);
+                                ?>
+                                <?=
+                                $form->field($model, 'limitCategoriesIds')->widget(Select2::classname(), [
+                                    'data' => $dataCategories,
+                                    'language' => 'fr',
+                                    'options' => ['placeholder' => 'Catégorie(s) ...'],
+                                    'pluginOptions' => [
+                                        'multiple' => true,
+                                        'allowClear' => true,
+                                        'value' => $valueCategories,
+
+                                    ],
+                                ])->label(false);
                                 ?>
                                 <br>
                                 <label class="control-label">Rechercher aux alentours de communes </label>
@@ -166,7 +190,20 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                         <?= Yii::t('SearchModule.base', '<strong>Search </strong> results') ?>
                     </div>
                     <div class="list-group">
-                        <a data-pjax-prevent href='<?= Url::to(['/search/search/index', 'SearchForm[keyword]' => $model->keyword, 'SearchForm[limitSpaceGuids]' => $model->limitSpaceGuids, 'SearchForm[scope]' => SearchForm::SCOPE_ALL, 'SearchForm[limitTypesIds]' => $model->limitTypesIds, 'SearchForm[limitCommunesIds]' => $model->limitCommunesIds, 'SearchForm[distanceRecherche]' => $model->distanceRecherche, 'SearchForm[isCertifier]' => $model->isCertifier, 'SearchForm[startDatetime]' => $model->startDatetime, 'SearchForm[endDatetime]' => $model->endDatetime]); ?>' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_ALL) ? ' active' : '' ?>">
+                        <a data-pjax-prevent href='<?= Url::to([
+                                                        '/search/search/index',
+                                                        'SearchForm[keyword]' => $model->keyword,
+                                                        'SearchForm[limitSpaceGuids]' => $model->limitSpaceGuids,
+                                                        'SearchForm[scope]' => SearchForm::SCOPE_ALL,
+                                                        'SearchForm[limitActivitesIds]' => $model->limitActivitesIds,
+                                                        'SearchForm[limitCategoriesIds]' => $model->limitCategoriesIds,
+                                                        'SearchForm[limitCommunesIds]' => $model->limitCommunesIds,
+                                                        'SearchForm[distanceRecherche]' => $model->distanceRecherche,
+                                                        'SearchForm[isCertifier]' => $model->isCertifier,
+                                                        'SearchForm[startDatetime]' => $model->startDatetime,
+                                                        'SearchForm[endDatetime]' => $model->endDatetime
+                                                    ]); ?>
+                        ' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_ALL) ? ' active' : '' ?>">
                             <div>
                                 <div class="edit_group "><?= Yii::t('SearchModule.base', 'All') ?>
                                     (<?= $totals[SearchForm::SCOPE_ALL] ?>)
@@ -174,28 +211,80 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                             </div>
                         </a>
                         <br />
-                        <a data-pjax-prevent href='<?= Url::to(['/search/search/index', 'SearchForm[keyword]' => $model->keyword, 'SearchForm[limitSpaceGuids]' => $model->limitSpaceGuids, 'SearchForm[scope]' => SearchForm::SCOPE_CONTENT, 'SearchForm[limitTypesIds]' => $model->limitTypesIds, 'SearchForm[limitCommunesIds]' => $model->limitCommunesIds, 'SearchForm[distanceRecherche]' => $model->distanceRecherche, 'SearchForm[isCertifier]' => $model->isCertifier, 'SearchForm[startDatetime]' => $model->startDatetime, 'SearchForm[endDatetime]' => $model->endDatetime]); ?>' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_CONTENT) ? ' active' : '' ?>">
+                        <a data-pjax-prevent href='<?= Url::to([
+                                                        '/search/search/index',
+                                                        'SearchForm[keyword]' => $model->keyword,
+                                                        'SearchForm[limitSpaceGuids]' => $model->limitSpaceGuids,
+                                                        'SearchForm[scope]' => SearchForm::SCOPE_CONTENT,
+                                                        'SearchForm[limitActivitesIds]' => $model->limitActivitesIds,
+                                                        'SearchForm[limitCategoriesIds]' => $model->limitCategoriesIds,
+                                                        'SearchForm[limitCommunesIds]' => $model->limitCommunesIds,
+                                                        'SearchForm[distanceRecherche]' => $model->distanceRecherche,
+                                                        'SearchForm[isCertifier]' => $model->isCertifier,
+                                                        'SearchForm[startDatetime]' => $model->startDatetime,
+                                                        'SearchForm[endDatetime]' => $model->endDatetime
+                                                    ]); ?>
+                                     ' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_CONTENT) ? ' active' : '' ?>">
                             <div>
                                 <div class="edit_group "><?= Yii::t('SearchModule.base', 'Content') ?>
                                     (<?= $totals[SearchForm::SCOPE_CONTENT] ?>)
                                 </div>
                             </div>
                         </a>
-                        <a data-pjax-prevent href='<?= Url::to(['/search/search/index', 'SearchForm[keyword]' => $model->keyword, 'SearchForm[limitSpaceGuids]' => $model->limitSpaceGuids, 'SearchForm[scope]' => SearchForm::SCOPE_USER, 'SearchForm[limitTypesIds]' => $model->limitTypesIds, 'SearchForm[limitCommunesIds]' => $model->limitCommunesIds, 'SearchForm[distanceRecherche]' => $model->distanceRecherche, 'SearchForm[isCertifier]' => $model->isCertifier, 'SearchForm[startDatetime]' => $model->startDatetime, 'SearchForm[endDatetime]' => $model->endDatetime]); ?>' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_USER) ? ' active' : '' ?>">
+                        <a data-pjax-prevent href='<?= Url::to([
+                                                        '/search/search/index',
+                                                        'SearchForm[keyword]' => $model->keyword,
+                                                        'SearchForm[limitSpaceGuids]' => $model->limitSpaceGuids,
+                                                        'SearchForm[scope]' => SearchForm::SCOPE_USER,
+                                                        'SearchForm[limitActivitesIds]' => $model->limitActivitesIds,
+                                                        'SearchForm[limitCategoriesIds]' => $model->limitCategoriesIds,
+                                                        'SearchForm[limitCommunesIds]' => $model->limitCommunesIds,
+                                                        'SearchForm[distanceRecherche]' => $model->distanceRecherche,
+                                                        'SearchForm[isCertifier]' => $model->isCertifier,
+                                                        'SearchForm[startDatetime]' => $model->startDatetime,
+                                                        'SearchForm[endDatetime]' => $model->endDatetime
+                                                    ]); ?>
+                                     ' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_USER) ? ' active' : '' ?>">
                             <div>
                                 <div class="edit_group "><?= Yii::t('SearchModule.base', 'Users') ?>
                                     (<?= $totals[SearchForm::SCOPE_USER] ?>)
                                 </div>
                             </div>
                         </a>
-                        <a data-pjax-prevent href='<?= Url::to(['/search/search/index', 'SearchForm[keyword]' => $model->keyword, 'SearchForm[limitSpaceGuids]' => $model->limitSpaceGuids, 'SearchForm[scope]' => SearchForm::SCOPE_SPACE, 'SearchForm[limitTypesIds]' => $model->limitTypesIds, 'SearchForm[limitCommunesIds]' => $model->limitCommunesIds, 'SearchForm[distanceRecherche]' => $model->distanceRecherche, 'SearchForm[isCertifier]' => $model->isCertifier, 'SearchForm[startDatetime]' => $model->startDatetime, 'SearchForm[endDatetime]' => $model->endDatetime]); ?>' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_SPACE) ? ' active' : '' ?>">
+                        <a data-pjax-prevent href='<?= Url::to([
+                                                        '/search/search/index',
+                                                        'SearchForm[keyword]' => $model->keyword,
+                                                        'SearchForm[limitSpaceGuids]' => $model->limitSpaceGuids,
+                                                        'SearchForm[scope]' => SearchForm::SCOPE_SPACE,
+                                                        'SearchForm[limitActivitesIds]' => $model->limitActivitesIds,
+                                                        'SearchForm[limitCategoriesIds]' => $model->limitCategoriesIds,
+                                                        'SearchForm[limitCommunesIds]' => $model->limitCommunesIds,
+                                                        'SearchForm[distanceRecherche]' => $model->distanceRecherche,
+                                                        'SearchForm[isCertifier]' => $model->isCertifier,
+                                                        'SearchForm[startDatetime]' => $model->startDatetime,
+                                                        'SearchForm[endDatetime]' => $model->endDatetime
+                                                    ]); ?>
+                                     ' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_SPACE) ? ' active' : '' ?>">
                             <div>
                                 <div class="edit_group "><?= Yii::t('SearchModule.base', 'Spaces') ?>
                                     (<?= $totals[SearchForm::SCOPE_SPACE] ?>)
                                 </div>
                             </div>
                         </a>
-                        <a data-pjax-prevent href='<?= Url::to(['/search/search/index', 'SearchForm[keyword]' => $model->keyword, 'SearchForm[limitSpaceGuids]' => $model->limitSpaceGuids, 'SearchForm[scope]' => SearchForm::SCOPE_EVENT, 'SearchForm[limitTypesIds]' => $model->limitTypesIds, 'SearchForm[limitCommunesIds]' => $model->limitCommunesIds, 'SearchForm[distanceRecherche]' => $model->distanceRecherche, 'SearchForm[isCertifier]' => $model->isCertifier, 'SearchForm[startDatetime]' => $model->startDatetime, 'SearchForm[endDatetime]' => $model->endDatetime]); ?>' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_EVENT) ? ' active' : '' ?>">
+                        <a data-pjax-prevent href='<?= Url::to([
+                                                        '/search/search/index',
+                                                        'SearchForm[keyword]' => $model->keyword,
+                                                        'SearchForm[limitSpaceGuids]' => $model->limitSpaceGuids,
+                                                        'SearchForm[scope]' => SearchForm::SCOPE_EVENT,
+                                                        'SearchForm[limitActivitesIds]' => $model->limitActivitesIds,
+                                                        'SearchForm[limitCategoriesIds]' => $model->limitCategoriesIds,
+                                                        'SearchForm[limitCommunesIds]' => $model->limitCommunesIds,
+                                                        'SearchForm[distanceRecherche]' => $model->distanceRecherche,
+                                                        'SearchForm[isCertifier]' => $model->isCertifier,
+                                                        'SearchForm[startDatetime]' => $model->startDatetime,
+                                                        'SearchForm[endDatetime]' => $model->endDatetime
+                                                    ]); ?>
+                                                    ' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_EVENT) ? ' active' : '' ?>">
                             <div>
                                 <div class="edit_group ">Evénements
                                     (<?= $totals[SearchForm::SCOPE_EVENT] ?>)
@@ -207,7 +296,20 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                         Résultat sur la map
                     </div>
                     <div class="list-group">
-                        <a data-pjax-prevent href='<?= Url::to(['/search/search/index', 'SearchForm[keyword]' => $model->keyword, 'SearchForm[limitSpaceGuids]' => $model->limitSpaceGuids, 'SearchForm[scope]' => SearchForm::SCOPE_CET_ENTITE, 'SearchForm[limitTypesIds]' => $model->limitTypesIds, 'SearchForm[limitCommunesIds]' => $model->limitCommunesIds, 'SearchForm[distanceRecherche]' => $model->distanceRecherche, 'SearchForm[isCertifier]' => $model->isCertifier, 'SearchForm[startDatetime]' => $model->startDatetime, 'SearchForm[endDatetime]' => $model->endDatetime]); ?>' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_CET_ENTITE) ? ' active' : '' ?>">
+                        <a data-pjax-prevent href='<?= Url::to([
+                                                        '/search/search/index',
+                                                        'SearchForm[keyword]' => $model->keyword,
+                                                        'SearchForm[limitSpaceGuids]' => $model->limitSpaceGuids,
+                                                        'SearchForm[scope]' => SearchForm::SCOPE_CET_ENTITE,
+                                                        'SearchForm[limitActivitesIds]' => $model->limitActivitesIds,
+                                                        'SearchForm[limitCategoriesIds]' => $model->limitCategoriesIds,
+                                                        'SearchForm[limitCommunesIds]' => $model->limitCommunesIds,
+                                                        'SearchForm[distanceRecherche]' => $model->distanceRecherche,
+                                                        'SearchForm[isCertifier]' => $model->isCertifier,
+                                                        'SearchForm[startDatetime]' => $model->startDatetime,
+                                                        'SearchForm[endDatetime]' => $model->endDatetime
+                                                    ]); ?>
+                                 ' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_CET_ENTITE) ? ' active' : '' ?>">
                             <div>
                                 <div class="edit_group "> CetEntite
                                     (<?= $totals[SearchForm::SCOPE_CET_ENTITE] ?>)
@@ -258,7 +360,7 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                     </div>
                 <?php elseif ($displayEvent) : ?>
                     <div class="col-md-5">
-                        <?php $filter = ActiveForm::begin(['action' => Url::to(['/search/search/index', 'SearchForm[keyword]' => $model->keyword, 'SearchForm[limitSpaceGuids]' => $model->limitSpaceGuids, 'SearchForm[scope]' => SearchForm::SCOPE_EVENT, 'SearchForm[limitTypesIds]' => $model->limitTypesIds, 'SearchForm[limitCommunesIds]' => $model->limitCommunesIds, 'SearchForm[distanceRecherche]' => $model->distanceRecherche, 'SearchForm[isCertifier]' => $model->isCertifier, 'SearchForm[startDatetime]' => $model->startDatetime, 'SearchForm[endDatetime]' => $model->endDatetime]), 'method' => 'GET']); ?>
+                        <?php $filter = ActiveForm::begin(['action' => Url::to(['/search/search/index', 'SearchForm[keyword]' => $model->keyword, 'SearchForm[limitSpaceGuids]' => $model->limitSpaceGuids, 'SearchForm[scope]' => SearchForm::SCOPE_EVENT, 'SearchForm[limitActivitesIds]' => $model->limitActivitesIds, 'SearchForm[limitCommunesIds]' => $model->limitCommunesIds, 'SearchForm[distanceRecherche]' => $model->distanceRecherche, 'SearchForm[isCertifier]' => $model->isCertifier, 'SearchForm[startDatetime]' => $model->startDatetime, 'SearchForm[endDatetime]' => $model->endDatetime]), 'method' => 'GET']); ?>
                         <label class="control-label">Rechercher un évènement depuis le </label>
                         <?= $filter->field($model, 'startDatetime')->widget(DatePicker::classname(), [
                             'dateFormat' => 'dd-MM-yyyy',
@@ -369,7 +471,7 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                                         No Output for Class <?= get_class($result); ?>
                                     <?php endif; ?>
                                 <?php } catch (\Throwable $e) {
-                                    echo" error :".$e;
+                                    echo " error :" . $e;
                                     Yii::error($e);
                                 } ?>
                             <?php endforeach; ?>

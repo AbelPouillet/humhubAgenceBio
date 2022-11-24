@@ -328,18 +328,30 @@ class ZendLuceneSearch extends Search
             $query->addSubquery($spaceBaseQuery, true);
         }
         /*  filtrer les résultats en amont */
-        /*if (count($options['limitTypes']) > 0) {
-            //print var_dump($options['limitTypes']);
+        if (count($options['limitActivites']) > 0) {
+            //print var_dump($options['limitActivites']);
             $strQuery = "";
-            foreach ($options['limitTypes'] as $type) {
-                $strQuery .= '(typesId:*_'.$type->id.'_*)';
+            foreach ($options['limitActivites'] as $activite) {
+                $strQuery .= '(activitesId:*_'.$activite->id.'_*)';
             }
             $queryParserStr = new QueryParser();
             $queryParserStr->setDefaultOperator(QueryParser::B_OR);
             $queryStr = $queryParserStr->parse($strQuery);
             //print $strQuery . "\n";
             $query->addSubquery($queryStr, true);
-        }*/
+        }
+        if (count($options['limitCategories']) > 0) {
+            //print var_dump($options['limitActivites']);
+            $strQuery = "";
+            foreach ($options['limitCategories'] as $categorie) {
+                $strQuery .= '(categoriesId:*_'.$categorie->id.'_*)';
+            }
+            $queryParserStr = new QueryParser();
+            $queryParserStr->setDefaultOperator(QueryParser::B_OR);
+            $queryStr = $queryParserStr->parse($strQuery);
+            //print $strQuery . "\n";
+            $query->addSubquery($queryStr, true);
+        }
         if (count($options['limitCommunes']) > 0) {
             $strQuery = "";
             foreach ($options['limitCommunes'] as $commune){

@@ -8,10 +8,12 @@
 
 namespace humhub\modules\search\controllers;
 
+use humhub\modules\cet_categorie\models\Categorie;
 use humhub\modules\user\widgets\Image;
 use Yii;
 use yii\data\Pagination;
 use humhub\components\Controller;
+use humhub\modules\cet_activite\models\Activite;
 use humhub\modules\space\models\Space;
 use humhub\modules\user\models\User;
 use humhub\modules\search\models\forms\SearchForm;
@@ -89,16 +91,38 @@ class SearchController extends Controller
                 }
             }
         }
-        $limitTypes = [];
-        /*if (!empty($model->limitTypesIds)) {
-            foreach ($model->limitTypesIds as $id) {
-                $type = CetType::findOne(['id' => trim($id)]);
-                if ($type !== null) {
-                    $limitTypes[] = $type;
+        $dataActivites = [];
+        foreach (Activite::find()->all() as $activite) {
+            $dataActivites[] = [$activite->id => $activite->nom];
+        }
+        $limitActivites = [];
+        $valueActivites = [];
+        if (!empty($model->limitActivitesIds)) {
+            foreach ($model->limitActivitesIds as $id) {
+                $activite = Activite::findOne(['id' => trim($id)]);
+                if ($activite !== null) {
+                    $limitActivites[] = $activite;
+                    $valueActivites[] = [ $id => $activite->nom];
                 }
             }
             $this->showResults = true;
-        }*/
+        }
+        $dataCategories = [];
+        foreach (Categorie::find()->all() as $categorie){
+            $dataCategories[] = [$categorie->id => $categorie->nom];
+        }
+        $limitCategories = [];
+        $valueCategories = [];
+        if (!empty($model->limitCategoriesIds)){
+            foreach ($model->limitCategoriesIds as $id){
+                $categorie = Categorie::findOne(['id' => trim($id)]);
+                if ($categorie !== null) {
+                    $limitCategories[] = $categorie;
+                    $valueCategories[] = [ $id => $categorie->nom];
+                }
+            }
+            $this->showResults = true;
+        }
         $limitCommunes = [];
         $this->distanceRecherche = $model->distanceRecherche;
         if (!empty($model->limitCommunesIds)) {
@@ -115,12 +139,12 @@ class SearchController extends Controller
             $this->showResults = true;
         }
 
-        if(!empty($model->startDatetime)) {
+        if (!empty($model->startDatetime)) {
             $this->startDatetime = $model->startDatetime;
             $this->showResults = true;
         }
 
-        if(!empty($model->endDatetime)) {
+        if (!empty($model->endDatetime)) {
             $this->endDatetime = $model->endDatetime;
             $this->showResults = true;
         }
@@ -130,8 +154,9 @@ class SearchController extends Controller
             'sort' => (empty($model->keyword)) ? 'title' : null,
             'pageSize' => Yii::$app->settings->get('paginationSize'),
             'limitSpaces' => $limitSpaces,
-            'limitTypes' => $limitTypes,
+            'limitActivites' => $limitActivites,
             'limitCommunes' => $limitCommunes,
+            'limitCategories' => $limitCategories,
             'distanceRecherche' => $this->distanceRecherche,
             'isCertifier' => $this->isCertifier,
         ];
@@ -152,7 +177,7 @@ class SearchController extends Controller
             $displayMap = true;
         } /*elseif ($model->scope == SearchForm::SCOPE_CET_PRODUIT) {
             $options['model'] = CetProduit::class;
-        } */else {
+        } */ else {
             $model->scope = SearchForm::SCOPE_ALL;
         }
 
@@ -171,8 +196,9 @@ class SearchController extends Controller
                 'sort' => (empty($model->keyword)) ? 'title' : null,
                 'pageSize' => $searchMapResultSet->total,
                 'limitSpaces' => $limitSpaces,
-                'limitTypes' => $limitTypes,
+                'limitActivites' => $limitActivites,
                 'limitCommunes' => $limitCommunes,
+                'limitCategories' => $limitCategories,
                 'distanceRecherche' => $this->distanceRecherche,
                 'isCertifier' => $this->isCertifier,
             ];
@@ -187,7 +213,12 @@ class SearchController extends Controller
             'pagination' => $pagination,
             'totals' => $model->getTotals($model->keyword, $options),
             'limitSpaces' => $limitSpaces,
-            'limitTypes' => $limitTypes,
+            'limitActivites' => $limitActivites,
+            'dataActivites' => $dataActivites,
+            'valueActivites' => $valueActivites,
+            'limitCategories' => $limitCategories,
+            'dataCategories' => $dataCategories,
+            'valueCategories' => $valueCategories,
             'limitCommunes' => $limitCommunes,
             'distanceRecherche' => $this->distanceRecherche,
             'displayMap' => $displayMap,

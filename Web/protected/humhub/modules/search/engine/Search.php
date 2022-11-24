@@ -160,12 +160,16 @@ abstract class Search extends Component
                         }
                     }
                 }
-            }/*
-            $meta['typesId'] = "_";
-            foreach ($obj->fkTypes as $type) {
-                $meta['typesId'] .= $type->id . "_";
-            }*/
-            print($obj->denominationcourante . " ajout de ses types dans le tableau meta recherches .\n");
+            }
+            $meta['activitesId'] = "_";
+            foreach ($obj->activites as $activite) {
+                $meta['activitesId'] .= $activite->id . "_";
+            }
+            $meta['categoriesId'] = "_";
+            foreach ($obj->categories as $categorie) {
+                $meta['categoriesId'] .= $categorie->id . "_";
+            }
+            print($obj->denominationcourante . " ajout de ses activites et categories dans le tableau meta recherches .\n");
         }
 
         // Add content related meta data
@@ -227,8 +231,8 @@ abstract class Search extends Component
             $options['limitSpaces'] = [];
         }
 
-        if (!isset($options['limitTypes'])) {
-            $options['limitTypes'] = [];
+        if (!isset($options['limitActivites'])) {
+            $options['limitActivites'] = [];
         }
 
         return $options;

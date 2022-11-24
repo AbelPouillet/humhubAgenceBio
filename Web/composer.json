@@ -23,6 +23,7 @@
         "firebase/php-jwt": "^5.0",
         "jbroadway/urlify": "^1.0",
         "kartik-v/yii2-widgets": "*",
+        "kartik-v/yii2-widget-select2": "@dev",
         "laminas/laminas-escaper": "^2.6",
         "laminas/laminas-http": "^2.14",
         "laminas/laminas-ldap": "^2.10",
