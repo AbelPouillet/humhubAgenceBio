@@ -328,6 +328,16 @@ class ZendLuceneSearch extends Search
             $query->addSubquery($spaceBaseQuery, true);
         }
         /*  filtrer les résultats en amont */
+        if($options['startDatetime'] || $options['endDatetime']) {
+            $strStart = $options['startDatetime'] ? strtotime($options['startDatetime']) : '*';
+            $strEnd =  $options['endDatetime'] ? strtotime($options['endDatetime']) : '*';
+            $strQuery = "timestamp:[".$strStart." TO ".$strEnd."]";
+            $queryParserStr = new QueryParser();
+            $queryParserStr->setDefaultOperator(QueryParser::B_OR);
+            $queryStr = $queryParserStr->parse($strQuery);
+            $query->addSubquery($queryStr, true);
+        }
+
         if (count($options['limitActivites']) > 0) {
             //print var_dump($options['limitActivites']);
             $strQuery = "";

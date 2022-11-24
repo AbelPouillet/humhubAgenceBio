@@ -360,7 +360,18 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                     </div>
                 <?php elseif ($displayEvent) : ?>
                     <div class="col-md-5">
-                        <?php $filter = ActiveForm::begin(['action' => Url::to(['/search/search/index', 'SearchForm[keyword]' => $model->keyword, 'SearchForm[limitSpaceGuids]' => $model->limitSpaceGuids, 'SearchForm[scope]' => SearchForm::SCOPE_EVENT, 'SearchForm[limitActivitesIds]' => $model->limitActivitesIds, 'SearchForm[limitCommunesIds]' => $model->limitCommunesIds, 'SearchForm[distanceRecherche]' => $model->distanceRecherche, 'SearchForm[isCertifier]' => $model->isCertifier, 'SearchForm[startDatetime]' => $model->startDatetime, 'SearchForm[endDatetime]' => $model->endDatetime]), 'method' => 'GET']); ?>
+                        <?php $filter = ActiveForm::begin(['action' => Url::to([
+                            '/search/search/index',
+                            'SearchForm[keyword]' => $model->keyword,
+                            'SearchForm[limitSpaceGuids]' => $model->limitSpaceGuids,
+                            'SearchForm[scope]' => SearchForm::SCOPE_EVENT,
+                            'SearchForm[limitActivitesIds]' => $model->limitActivitesIds,
+                            'SearchForm[limitCommunesIds]' => $model->limitCommunesIds,
+                            'SearchForm[distanceRecherche]' => $model->distanceRecherche,
+                            'SearchForm[isCertifier]' => $model->isCertifier,
+                            'SearchForm[startDatetime]' => $model->startDatetime,
+                            'SearchForm[endDatetime]' => $model->endDatetime
+                        ]), 'method' => 'GET']); ?>
                         <label class="control-label">Rechercher un évènement depuis le </label>
                         <?= $filter->field($model, 'startDatetime')->widget(DatePicker::classname(), [
                             'dateFormat' => 'dd-MM-yyyy',
@@ -401,30 +412,6 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                     <br><br><br>
                     <div class="searchResults">
                         <?php if (count($results) > 0) : ?>
-                            <?php
-                            if ($startDatetime || $endDatetime) {
-                                $newResults = [];
-                                foreach ($results as $result) {
-                                    if ($startDatetime && $endDatetime) {
-                                        if (
-                                            strtotime($result['start_datetime']) >= strtotime($startDatetime)
-                                            && strtotime($result['start_datetime']) <= strtotime($endDatetime)
-                                        ) {
-                                            $newResults[] = $result;
-                                        }
-                                    } else {
-                                        if ($startDatetime && strtotime($result['start_datetime']) >= strtotime($startDatetime)) {
-                                            $newResults[] = $result;
-                                        }
-                                        if ($endDatetime && strtotime($result['start_datetime']) <= strtotime($endDatetime)) {
-                                            $newResults[] = $result;
-                                        }
-                                    }
-                                }
-                                $results = $newResults;
-                                $totals[SearchForm::SCOPE_EVENT] = count($newResults);
-                            }
-                            ?>
                             <?php foreach ($results as $result) : ?>
                                 <?php try {  ?>
                                     <?php if ($result instanceof ContentActiveRecord) : ?>

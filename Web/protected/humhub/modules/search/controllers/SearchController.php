@@ -159,6 +159,8 @@ class SearchController extends Controller
             'limitCategories' => $limitCategories,
             'distanceRecherche' => $this->distanceRecherche,
             'isCertifier' => $this->isCertifier,
+            'startDatetime' => $this->startDatetime,
+            'endDatetime' => $this->endDatetime,
         ];
         $displayMap = false;
         $displayEvent = false;
