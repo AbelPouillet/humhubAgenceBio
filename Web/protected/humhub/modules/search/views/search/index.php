@@ -204,7 +204,7 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                         ' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_ALL) ? ' active' : '' ?>">
                             <div>
                                 <div class="edit_group "><?= Yii::t('SearchModule.base', 'All') ?>
-                                    (<?= $totals[SearchForm::SCOPE_ALL] ?>)
+                                    <?= ($model->scope === SearchForm::SCOPE_ALL) ? '('.$total.')' : '' ?>
                                 </div>
                             </div>
                         </a>
@@ -225,7 +225,7 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                                      ' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_CONTENT) ? ' active' : '' ?>">
                             <div>
                                 <div class="edit_group "><?= Yii::t('SearchModule.base', 'Content') ?>
-                                    (<?= $totals[SearchForm::SCOPE_CONTENT] ?>)
+                                    <?= ($model->scope === SearchForm::SCOPE_CONTENT) ? '('.$total.')' : '' ?>
                                 </div>
                             </div>
                         </a>
@@ -245,7 +245,7 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                                      ' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_USER) ? ' active' : '' ?>">
                             <div>
                                 <div class="edit_group "><?= Yii::t('SearchModule.base', 'Users') ?>
-                                    (<?= $totals[SearchForm::SCOPE_USER] ?>)
+                                    <?= ($model->scope === SearchForm::SCOPE_USER) ? '('.$total.')' : '' ?>
                                 </div>
                             </div>
                         </a>
@@ -265,7 +265,7 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                                      ' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_SPACE) ? ' active' : '' ?>">
                             <div>
                                 <div class="edit_group "><?= Yii::t('SearchModule.base', 'Spaces') ?>
-                                    (<?= $totals[SearchForm::SCOPE_SPACE] ?>)
+                                    <?= ($model->scope === SearchForm::SCOPE_SPACE) ? '('.$total.')' : '' ?>
                                 </div>
                             </div>
                         </a>
@@ -285,7 +285,7 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                                                     ' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_EVENT) ? ' active' : '' ?>">
                             <div>
                                 <div class="edit_group ">Evénements
-                                    (<?= $totals[SearchForm::SCOPE_EVENT] ?>)
+                                    <?= ($model->scope === SearchForm::SCOPE_EVENT) ? '('.$total.')' : '' ?>
                                 </div>
                             </div>
                         </a>
@@ -310,7 +310,7 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                                  ' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_CET_ENTITE) ? ' active' : '' ?>">
                             <div>
                                 <div class="edit_group "> CetEntite
-                                    (<?= $totals[SearchForm::SCOPE_CET_ENTITE] ?>)
+                                    <?= ($model->scope === SearchForm::SCOPE_CET_ENTITE) ? '('.$total.')' : '' ?>
                                 </div>
                             </div>
                         </a>

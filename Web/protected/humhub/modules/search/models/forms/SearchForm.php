@@ -57,30 +57,4 @@ class SearchForm extends Model
         ];
     }
 
-    public function getTotals($keyword, $options)
-    {
-        $totals = [];
-
-        // Unset unnecessary search options
-        unset($options['model'], $options['type'], $options['page'], $options['pageSize']);
-
-        $searchResultSetCount = Yii::$app->search->find($keyword, array_merge($options, ['model' => User::class]));
-        $totals[self::SCOPE_USER] = $searchResultSetCount->total;
-        $searchResultSetCount = Yii::$app->search->find($keyword, array_merge($options, ['model' => Space::class]));
-        $totals[self::SCOPE_SPACE] = $searchResultSetCount->total;
-        // Recherche d'event
-        $searchResultSetCount = Yii::$app->search->find($keyword, array_merge($options, ['model' => CalendarEntry::class]));
-        $totals[self::SCOPE_EVENT] = $searchResultSetCount->total;
-
-        $searchResultSetCount = Yii::$app->search->find($keyword, array_merge($options, ['type' => Search::DOCUMENT_TYPE_CONTENT]));
-        $totals[self::SCOPE_CONTENT] = $searchResultSetCount->total;
-        // TODO: Recherches Cetcal
-
-        $searchResultSetCount = Yii::$app->search->find($keyword, array_merge($options, ['model' => Entite::class]));
-        $totals[self::SCOPE_CET_ENTITE] = $searchResultSetCount->total;
-
-        $totals[self::SCOPE_ALL] = $totals[self::SCOPE_CONTENT] + $totals[self::SCOPE_SPACE] + $totals[self::SCOPE_USER] + $totals[self::SCOPE_CET_ENTITE] + $totals[self::SCOPE_EVENT];
-
-        return $totals;
-    }
 }

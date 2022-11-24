@@ -192,7 +192,7 @@ class SearchController extends Controller
         ];
 
         $searchResultSet = Yii::$app->search->find($model->keyword, $options);
-
+        $total = $searchResultSet->total;
         // Store static for use in widgets (e.g. fileList)
         self::$keyword = $model->keyword;
 
@@ -225,7 +225,7 @@ class SearchController extends Controller
             'results' => $searchResultSet->getResultInstances(),
             'resultMap' => $resultMap,
             'pagination' => $pagination,
-            'totals' => $model->getTotals($model->keyword, $options),
+            'total' => $total,
             'limitSpaces' => $limitSpaces,
             'limitActivites' => $limitActivites,
             'dataActivites' => $dataActivites,
