@@ -1,12 +1,12 @@
 
 ## EVENT
 
-Afficher tout les résultat à partir du jour courant par défaut 
+Afficher tout les résultat à partir du jour courant par défaut DONE
 
 ## mapView
 
 Icon par défault pour production et préparation => ferme 
- pour les autres => magasin 
+ pour les autres => magasin DONE
 
 ## Recherche par produit
 

@@ -74,6 +74,12 @@ class MapView extends Widget
         if (count($this->cetEntites) > 0) {
             $formatedAdresseCets = [];
             foreach ($this->cetEntites as $cetEntite) {
+                $defaultIcon = 'magasin';
+                foreach($cetEntite->activites as $activite){
+                    if($activite->id <= 2){
+                        $defaultIcon = 'ferme';
+                    }
+                }
                 foreach ($cetEntite->adresses as $adresseCet) {
                     isset($cetEntite->denominationcourante) ? $name = $cetEntite->denominationcourante : $name = $cetEntite->raisonSociale;
                     $formatedAdresseCets[] = [
@@ -83,6 +89,7 @@ class MapView extends Widget
                         'street' => $adresseCet->lieu,
                         'zip' => $adresseCet->codePostal,
                         'city' => $adresseCet->ville,
+                        'defaultIcon' => $defaultIcon,
                         'latitude' => floatval($adresseCet->lat),
                         'longitude' => floatval($adresseCet->long),
                         'id' => $cetEntite->id

@@ -351,7 +351,7 @@ MapAssetBundle::register($this);
                         console.log(adresseCet.codeNAF);
                         switch (adresseCet.codeNAF) {
                             case null:
-                                icon_carto = cetIconProducteur;
+                                adresseCet.defaultIcon == 'magasin' ? icon_carto = cetAnnuaireIcon_magasinBio : icon_carto = cetIconProducteur;
                                 break;
                             case "03.00.64":
                                 icon_carto = cetIconAlgues;
@@ -450,7 +450,8 @@ MapAssetBundle::register($this);
                                 icon_carto = cetAnnuaireIcon_magasinBio;
                                 break;
                             default:
-                                icon_carto = cetIconProducteur;
+                                adresseCet.defaultIcon == 'magasin' ? icon_carto = cetAnnuaireIcon_magasinBio : icon_carto = cetIconProducteur;
+
                         }
 
                         var marker = L.marker([adresseCet.latitude, adresseCet.longitude], {
