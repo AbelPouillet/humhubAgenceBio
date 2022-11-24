@@ -169,7 +169,7 @@ class ZendLuceneSearch extends Search
 
         $index = $this->getIndex();
         $keyword = str_replace(['*', '?', '_', '$', '-', '.', '\'', '+', '&&', '||', '!', '(', ')', '{', '}', '[', ']', '^', '"', '~', ':', '\\'], ' ', mb_strtolower($keyword, 'utf-8'));
-
+        //print('find launched');
         $query = $this->buildQuery($keyword, $options);
         if ($query === null) {
             return new SearchResultSet();
@@ -210,12 +210,13 @@ class ZendLuceneSearch extends Search
      */
     protected function buildQuery($keyword, $options)
     {
+        //print("build query launched \n");
         // Allow *Token*
         Wildcard::setMinPrefixLength(0);
 
         $query = new Boolean();
 
-        $emptyQuery = true;
+        //$emptyQuery = true;
         foreach (explode(' ', $keyword) as $k) {
             // Require a minimum of non-wildcard characters
             if (mb_strlen($k, Yii::$app->charset) >= $this->minQueryTokenLength) {
@@ -227,10 +228,10 @@ class ZendLuceneSearch extends Search
 
         // if only too short keywords are given, the result is empty
         // when no keyword was given - show some results
-        if ($emptyQuery && $keyword != '') {
+        /*if ($emptyQuery && $keyword != '') {
             //print var_dump($emptyQuery);
             return null;
-        }
+        }*/
 
         // Add model filter
         if (isset($options['model']) && $options['model'] != '') {
@@ -328,10 +329,12 @@ class ZendLuceneSearch extends Search
             $query->addSubquery($spaceBaseQuery, true);
         }
         /*  filtrer les résultats en amont */
-        if($options['startDatetime'] || $options['endDatetime']) {
+        //print('startDatetime: ' . $options['startDatetime']. 'endDatetime: ' .$options['endDatetime']. ' displayEvent: ' .$options['displayEvent']);
+        if(($options['startDatetime'] || $options['endDatetime']) && $options['displayEvent']){
             $strStart = $options['startDatetime'] ? strtotime($options['startDatetime']) : '*';
             $strEnd =  $options['endDatetime'] ? strtotime($options['endDatetime']) : '*';
             $strQuery = "timestamp:[".$strStart." TO ".$strEnd."]";
+            //print($strQuery);
             $queryParserStr = new QueryParser();
             $queryParserStr->setDefaultOperator(QueryParser::B_OR);
             $queryStr = $queryParserStr->parse($strQuery);

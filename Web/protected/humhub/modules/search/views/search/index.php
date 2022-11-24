@@ -181,8 +181,6 @@ humhub\modules\stream\assets\StreamAsset::register($this);
             </div>
         </div>
     </div>
-
-    <?php if (!empty($model->keyword) || $showResults) : ?>
         <div class="row">
             <div class="col-md-2">
                 <div class="panel panel-default">
@@ -474,8 +472,5 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                 <div class="pagination-container"><?= LinkPager::widget(['pagination' => $pagination]) ?></div>
                 <br><br>
             </div>
-
-
-        <?php endif; ?>
         <?= FooterMenu::widget(['location' => FooterMenu::LOCATION_FULL_PAGE]); ?>
         </div>

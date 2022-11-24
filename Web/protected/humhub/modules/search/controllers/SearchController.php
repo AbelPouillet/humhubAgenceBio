@@ -46,7 +46,6 @@ class SearchController extends Controller
      *
      */
     public $displayMap;
-    public $displayEvent;
     /**
      * @inheritdoc
      */
@@ -102,23 +101,23 @@ class SearchController extends Controller
                 $activite = Activite::findOne(['id' => trim($id)]);
                 if ($activite !== null) {
                     $limitActivites[] = $activite;
-                    $valueActivites[] = [ $id => $activite->nom];
+                    $valueActivites[] = [$id => $activite->nom];
                 }
             }
             $this->showResults = true;
         }
         $dataCategories = [];
-        foreach (Categorie::find()->all() as $categorie){
+        foreach (Categorie::find()->all() as $categorie) {
             $dataCategories[] = [$categorie->id => $categorie->nom];
         }
         $limitCategories = [];
         $valueCategories = [];
-        if (!empty($model->limitCategoriesIds)){
-            foreach ($model->limitCategoriesIds as $id){
+        if (!empty($model->limitCategoriesIds)) {
+            foreach ($model->limitCategoriesIds as $id) {
                 $categorie = Categorie::findOne(['id' => trim($id)]);
                 if ($categorie !== null) {
                     $limitCategories[] = $categorie;
-                    $valueCategories[] = [ $id => $categorie->nom];
+                    $valueCategories[] = [$id => $categorie->nom];
                 }
             }
             $this->showResults = true;
@@ -142,16 +141,44 @@ class SearchController extends Controller
         if (!empty($model->startDatetime)) {
             $this->startDatetime = $model->startDatetime;
             $this->showResults = true;
+        } else {
+            $this->startDatetime = date('d-m-Y');
+            $model->startDatetime = $this->startDatetime;
+            //print ($this->startDatetime);
+
         }
 
         if (!empty($model->endDatetime)) {
             $this->endDatetime = $model->endDatetime;
             $this->showResults = true;
         }
+        $displayMap = false;
+        $displayEvent = false;
+        $type = '';
+        $modelClass = '';
+        if ($model->scope == SearchForm::SCOPE_EVENT) {
+            $type = Search::DOCUMENT_TYPE_EVENT;
+            $displayEvent = true;
+        } elseif ($model->scope == SearchForm::SCOPE_CONTENT) {
+            $type = Search::DOCUMENT_TYPE_CONTENT;
+        } elseif ($model->scope == SearchForm::SCOPE_SPACE) {
+            $modelClass = Space::class;
+        } elseif ($model->scope == SearchForm::SCOPE_USER) {
+            $modelClass = User::class;
+        } elseif ($model->scope == SearchForm::SCOPE_CET_ENTITE) {
+            $modelClass = Entite::class;
+            $displayMap = true;
+        } /*elseif ($model->scope == SearchForm::SCOPE_CET_PRODUIT) {
+            $modelClass = CetProduit::class;
+        } */ else {
+            $model->scope = SearchForm::SCOPE_ALL;
+        }
 
         $options = [
+            'model' => $modelClass,
+            'type' => $type,
             'page' => $model->page,
-            'sort' => (empty($model->keyword)) ? 'title' : null,
+            'sort' => null,
             'pageSize' => Yii::$app->settings->get('paginationSize'),
             'limitSpaces' => $limitSpaces,
             'limitActivites' => $limitActivites,
@@ -160,28 +187,9 @@ class SearchController extends Controller
             'distanceRecherche' => $this->distanceRecherche,
             'isCertifier' => $this->isCertifier,
             'startDatetime' => $this->startDatetime,
+            'displayEvent' => $displayEvent,
             'endDatetime' => $this->endDatetime,
         ];
-        $displayMap = false;
-        $displayEvent = false;
-        $resultMap = [];
-        if ($model->scope == SearchForm::SCOPE_EVENT) {
-            $options['type'] = Search::DOCUMENT_TYPE_EVENT;
-            $displayEvent = true;
-        } elseif ($model->scope == SearchForm::SCOPE_CONTENT) {
-            $options['type'] = Search::DOCUMENT_TYPE_CONTENT;
-        } elseif ($model->scope == SearchForm::SCOPE_SPACE) {
-            $options['model'] = Space::class;
-        } elseif ($model->scope == SearchForm::SCOPE_USER) {
-            $options['model'] = User::class;
-        } elseif ($model->scope == SearchForm::SCOPE_CET_ENTITE) {
-            $options['model'] = Entite::class;
-            $displayMap = true;
-        } /*elseif ($model->scope == SearchForm::SCOPE_CET_PRODUIT) {
-            $options['model'] = CetProduit::class;
-        } */ else {
-            $model->scope = SearchForm::SCOPE_ALL;
-        }
 
         $searchResultSet = Yii::$app->search->find($model->keyword, $options);
 
@@ -191,11 +199,13 @@ class SearchController extends Controller
         $pagination = new Pagination;
         $pagination->totalCount = $searchResultSet->total;
         $pagination->pageSize = $searchResultSet->pageSize;
+
+        $resultMap = [];
         if ($displayMap) {
             $searchMapResultSet = $searchResultSet;
             $optionsMap = [
                 'page' => 0,
-                'sort' => (empty($model->keyword)) ? 'title' : null,
+                'sort' => null,
                 'pageSize' => $searchMapResultSet->total,
                 'limitSpaces' => $limitSpaces,
                 'limitActivites' => $limitActivites,
@@ -203,6 +213,8 @@ class SearchController extends Controller
                 'limitCategories' => $limitCategories,
                 'distanceRecherche' => $this->distanceRecherche,
                 'isCertifier' => $this->isCertifier,
+                'model' => $modelClass,
+                'type' => $type,
             ];
 
             $searchMapResultSet =  Yii::$app->search->find($model->keyword, $optionsMap);
