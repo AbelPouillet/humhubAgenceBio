@@ -75,8 +75,8 @@ class MapView extends Widget
             $formatedAdresseCets = [];
             foreach ($this->cetEntites as $cetEntite) {
                 $defaultIcon = 'magasin';
-                foreach($cetEntite->activites as $activite){
-                    if($activite->id <= 2){
+                foreach ($cetEntite->activites as $activite) {
+                    if ($activite->id == 1) {
                         $defaultIcon = 'ferme';
                     }
                 }

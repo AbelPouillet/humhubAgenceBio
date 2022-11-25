@@ -41,6 +41,8 @@ AppAsset::register($this);
             /*['label' => 'About', 'url' => ['/site/about']],
             ['label' => 'Contact', 'url' => ['/site/contact']],*/
             ['label' => 'Entite', 'url' => ['/entite/index']],
+            ['label' => 'Produit', 'url' => ['/produit/index']],
+            ['label' => 'Produitnaf', 'url' => ['/produitnaf/index']],
             ['label' => 'Infos Supplementaire', 'url' => ['/infossupplementaires/index']],
             ['label' => 'Valeur infos supplementaires', 'url' => ['/infossupplementairesvaleur/index']],
             ['label' => 'Communes', 'url' => ['/communes/index']],
