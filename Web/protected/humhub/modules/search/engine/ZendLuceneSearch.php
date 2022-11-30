@@ -93,8 +93,15 @@ class ZendLuceneSearch extends Search
             if (is_array($val)) {
                 $val = implode(' ', $val);
             }
-
-            $doc->addField(Field::Text($key, $val, 'UTF-8'));
+            //On ajoute la priorisation du champ productions
+            $field = Field::Text($key, $val, 'UTF-8');
+            if ($key == 'productions') {
+                $field->boost = 1000.0;
+                print 'boost production';
+                $doc->addField($field);
+            } else {
+                $doc->addField($field);
+            }
         }
 
         foreach ($this->getAdditionalAttributes($obj) as $attrName => $attrValue) {
@@ -176,9 +183,9 @@ class ZendLuceneSearch extends Search
         }
 
         if (!isset($options['sortField']) || $options['sortField'] == '') {
-            $hits = new \ArrayObject($index->find($query, 'timestamp' , SORT_NUMERIC , SORT_ASC) );
+            $hits = new \ArrayObject($index->find($query, 'timestamp', SORT_NUMERIC, SORT_ASC));
         } else {
-            $hits = new \ArrayObject($index->find($query, $options['sortField']));
+            $hits = new \ArrayObject($index->find($query));
         }
 
         $resultSet = new SearchResultSet();
@@ -330,10 +337,10 @@ class ZendLuceneSearch extends Search
         }
         /*  filtrer les résultats en amont */
         //print('startDatetime: ' . $options['startDatetime']. 'endDatetime: ' .$options['endDatetime']. ' displayEvent: ' .$options['displayEvent']);
-        if(($options['startDatetime'] || $options['endDatetime']) && $options['displayEvent']){
+        if ($options['displayEvent'] && ($options['startDatetime'] || $options['endDatetime'])) {
             $strStart = $options['startDatetime'] ? strtotime($options['startDatetime']) : '*';
             $strEnd =  $options['endDatetime'] ? strtotime($options['endDatetime']) : '*';
-            $strQuery = "timestamp:[".$strStart." TO ".$strEnd."]";
+            $strQuery = "timestamp:[" . $strStart . " TO " . $strEnd . "]";
             //print($strQuery);
             $queryParserStr = new QueryParser();
             $queryParserStr->setDefaultOperator(QueryParser::B_OR);
@@ -345,7 +352,7 @@ class ZendLuceneSearch extends Search
             //print var_dump($options['limitActivites']);
             $strQuery = "";
             foreach ($options['limitActivites'] as $activite) {
-                $strQuery .= '(activitesId:*_'.$activite->id.'_*)';
+                $strQuery .= '(activitesId:*_' . $activite->id . '_*)';
             }
             $queryParserStr = new QueryParser();
             $queryParserStr->setDefaultOperator(QueryParser::B_OR);
@@ -357,7 +364,7 @@ class ZendLuceneSearch extends Search
             //print var_dump($options['limitActivites']);
             $strQuery = "";
             foreach ($options['limitCategories'] as $categorie) {
-                $strQuery .= '(categoriesId:*_'.$categorie->id.'_*)';
+                $strQuery .= '(categoriesId:*_' . $categorie->id . '_*)';
             }
             $queryParserStr = new QueryParser();
             $queryParserStr->setDefaultOperator(QueryParser::B_OR);
@@ -367,8 +374,8 @@ class ZendLuceneSearch extends Search
         }
         if (count($options['limitCommunes']) > 0) {
             $strQuery = "";
-            foreach ($options['limitCommunes'] as $commune){
-                $strQuery .= '(distanceCommune:*_'.$commune->id.$options['distanceRecherche'].'_*)';
+            foreach ($options['limitCommunes'] as $commune) {
+                $strQuery .= '(distanceCommune:*_' . $commune->id . $options['distanceRecherche'] . '_*)';
             }
             $queryParserStr = new QueryParser();
             $queryParserStr->setDefaultOperator(QueryParser::B_OR);
@@ -377,7 +384,7 @@ class ZendLuceneSearch extends Search
             $query->addSubquery($queryStr, true);
         }
         //print $query->__toString();
-        if($options['isCertifier']){
+        if ($options['isCertifier']) {
             $strQuery = "(isCertifier:true)";
             $queryParserStr = new QueryParser();
             $queryParserStr->setDefaultOperator(QueryParser::B_OR);

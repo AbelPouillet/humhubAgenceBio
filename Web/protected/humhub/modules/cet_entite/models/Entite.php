@@ -14,6 +14,7 @@ use humhub\modules\cet_join_infos_supplementaires_entite\models\Joininfossupplem
 use humhub\modules\cet_join_production_entite\models\Joinproductionentite;
 use humhub\modules\cet_join_site_web_entite\models\Joinsitewebentite;
 use humhub\modules\cet_production\models\Production;
+use humhub\modules\cet_produitnaf\models\Produitnaf;
 use humhub\modules\cet_site_web\models\Siteweb;
 use humhub\modules\search\interfaces\Searchable;
 use humhub\modules\cet_entite\widgets\Wall;
@@ -248,12 +249,30 @@ class Entite extends \yii\db\ActiveRecord implements Searchable
             'denominationcourante' => $this->denominationcourante,
             'categories' => $this->getCategoriesStr(),
             'activites' => $this->getActivitesStr(),
-            'productions' => $this->getProductionsStr()
+            'productions' => $this->getProductionsStr(),
+            'produits' => $this->getProduitsStr()
         ];
 
         return $attributes;
     }
 
+    public function getProduitsStr()
+    {
+        $produits = "";
+        foreach ($this->productions as $production) {
+            $codeNafArray = explode('.', $production->code, 2);
+            $codeNafNiv1 = isset($codeNafArray[0]) ? $codeNafArray[0] : '';
+            $codeNafNiv2 = isset($codeNafArray[1]) ? substr($codeNafArray[1], 0, 2) : '';
+            foreach (Produitnaf::find()->all() as $produitnaf) {
+                if ($codeNafNiv2 != '' ?
+                str_starts_with($produitnaf->codenaf, $codeNafNiv1 . '.' . $codeNafNiv2)
+                : str_starts_with($produitnaf->codenaf, $codeNafNiv1)) {
+                    $produits .= $produitnaf->cetProduit->nom . " , ";
+                }
+            }
+        }
+        return $produits;
+    }
     public function getCategoriesStr()
     {
         $categories = "";

@@ -9,6 +9,15 @@ Icon par défault pour production et préparation => ferme
  pour les autres => magasin DONE
 
 ## Moulinette produit / code NAF
+
+code retenu :
+01 02 03
+10 11 
+46 47 
+52 56
+ 
+légume: 01
+
 LOAD DATA INFILE '/var/lib/mysql-files/cet_produit.csv'
 INTO TABLE cet_produit
 FIELDS TERMINATED BY ';'
@@ -34,6 +43,20 @@ res = {
 ## Recherche par produit
 
 Lier une liste de produit au deux premier niveau du code NAF de production
+
+Si pas de hightlight message résultat par extension.
+
+## Recherche privilégier productions à produits
+
+R&D ZendLuceneSearch
+
+ajouter les code naf en searchable
+
+## Mapping codeNaf => types
+
+codeNaf Entite + codeNaf Production ==>> typesEntites => typescodeNafNiv2
+
++ moulinettes
 
 ## Mise à jour de la prod
 

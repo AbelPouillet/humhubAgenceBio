@@ -371,9 +371,9 @@ MapAssetBundle::register($this);
                                 '' :
                                 icon_carto = cetIconChampignons;
                                 break;
-                            case "circuit_court":
+                            /*case "circuit_court":
                                 icon_carto = cetIconCircuitCourt;
-                                break;
+                                break;*/
                             case "10.39.22":
                                 //confiture
                                 icon_carto = cetIconConserveConfiture;

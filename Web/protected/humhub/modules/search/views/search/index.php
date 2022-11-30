@@ -79,6 +79,14 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                 $(".searchResults").highlight("<?= Html::encode($k); ?>");
             });
         <?php endforeach; ?>
+        //TODO: if $(".media-body").children().children('.highlight').length > 0
+        $(".media-body").each(function() {
+            if ($(this).children().children('.highlight').length == 0){
+                $(this).append('<h6 style ="{color: red}">Résultat trouver par extension de recherche </h6>');
+            }else {
+                $(this).append('<h6 style ="{color: red}">Résultat conforme '+$(this).children().children('span.highlight').length +'</h6>');
+            }
+        });
     });
 </script>
 

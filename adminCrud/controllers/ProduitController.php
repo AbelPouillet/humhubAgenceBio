@@ -37,16 +37,72 @@ class ProduitController extends Controller
         ini_set('max_execution_time', '300');
         foreach (Produit::find()->all() as $produit) {
             $res =  $this->getNaf($produit->nom);
+            $categorieNaf = [];
+            switch ($produit->categorie) {
+                case 'légume':
+                    $categorieNaf = ['01', '10', '46', '47'];
+                    break;
+
+                case 'fruit':
+                    $categorieNaf = ['01', '10', '46', '47'];
+                    break;
+
+                case 'viande':
+                    $categorieNaf = ['01', '46', '47'];
+                    break;
+
+                case 'boisson':
+                    $categorieNaf = ['10', '11', '46', '47'];
+                    break;
+                case 'céréales et dérivés/légumineuses':
+                    $categorieNaf = ['01', '10', '46', '47'];
+                    break;
+                case 'champignon':
+                    $categorieNaf = ['01', '02', '46', '47'];
+                    break;
+                case 'nourriture pour animaux':
+                    $categorieNaf = ['10', '46', '47'];
+                    break;
+                case 'plante':
+                    $categorieNaf = ['01', '10', '46', '47'];
+                    break;
+                case 'plants et semences':
+                    $categorieNaf = ['01', '46', '47'];
+                    break;
+                case 'poissons ou coquillages':
+                    $categorieNaf = ['03', '10', '46', '47'];
+                    break;
+                case 'produit de la ruche':
+                    $categorieNaf = ['01', '10', '46', '47'];
+                    break;
+                case 'produit laitier':
+                    $categorieNaf = ['01', '10', '46', '47'];
+                    break;
+                case "produits d'entretien":
+                    $categorieNaf = ['20', '46', '47'];
+                    break;
+                case "produits d'hygiène":
+                    $categorieNaf = ['20', '46', '47'];
+                    break;
+                case "produits transformés":
+                    $categorieNaf = ['10', '46', '47'];
+                    break;
+                default:
+                    $categorieNaf = ['01', '46', '47'];
+                    break;
+            }
             //print(var_dump($res));
-            $i = 0;
             foreach ($res['documents'] as $doc) {
-                if ($i == 2) break;
-                $i++;
-                $produitnaf = new Produitnaf();
-                $produitnaf->cet_produit_id = $produit->id;
-                $produitnaf->libelle = $doc['libelle'];
-                $produitnaf->codenaf = $doc['code'];
-                $produitnaf->save();
+                //TODO filtre $categorieNaf sur isProduction foreach
+                foreach ($categorieNaf as $nafniv1) {
+                    if (str_starts_with($doc['code'], $nafniv1)) {
+                        $produitnaf = new Produitnaf();
+                        $produitnaf->cet_produit_id = $produit->id;
+                        $produitnaf->libelle = $doc['libelle'];
+                        $produitnaf->codenaf = $doc['code'];
+                        $produitnaf->save();
+                    }
+                }
             }
         }
         return 'loaded';
@@ -54,7 +110,7 @@ class ProduitController extends Controller
 
     public function getNaf($produit)
     {
-        $data = array("q"=> $produit, "start" => 0, "rows" => 100, "facetsQuery" => [], "filters"=> []);
+        $data = array("q" => $produit, "start" => 0, "rows" => 100, "facetsQuery" => [], "filters" => []);
         //print(var_dump($data));
         $curl = curl_init('https://www.insee.fr/fr/metadonnees/nafr2/consultation');
         $payload = json_encode($data);
@@ -62,7 +118,7 @@ class ProduitController extends Controller
         curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        
+
 
         $response = json_decode(curl_exec($curl), true);
         //print(var_dump($response));

@@ -156,9 +156,11 @@ class SearchController extends Controller
         $displayEvent = false;
         $type = '';
         $modelClass = '';
+        $sortField = 'productions';
         if ($model->scope == SearchForm::SCOPE_EVENT) {
             $type = Search::DOCUMENT_TYPE_EVENT;
             $displayEvent = true;
+            $sortField = '';
         } elseif ($model->scope == SearchForm::SCOPE_CONTENT) {
             $type = Search::DOCUMENT_TYPE_CONTENT;
         } elseif ($model->scope == SearchForm::SCOPE_SPACE) {
@@ -178,7 +180,7 @@ class SearchController extends Controller
             'model' => $modelClass,
             'type' => $type,
             'page' => $model->page,
-            'sort' => null,
+            'sortField' => $sortField,
             'pageSize' => Yii::$app->settings->get('paginationSize'),
             'limitSpaces' => $limitSpaces,
             'limitActivites' => $limitActivites,
@@ -205,7 +207,7 @@ class SearchController extends Controller
             $searchMapResultSet = $searchResultSet;
             $optionsMap = [
                 'page' => 0,
-                'sort' => null,
+                'sortField' => 'productions',
                 'pageSize' => $searchMapResultSet->total,
                 'limitSpaces' => $limitSpaces,
                 'limitActivites' => $limitActivites,
@@ -213,6 +215,7 @@ class SearchController extends Controller
                 'limitCategories' => $limitCategories,
                 'distanceRecherche' => $this->distanceRecherche,
                 'isCertifier' => $this->isCertifier,
+                'displayEvent' => false,
                 'model' => $modelClass,
                 'type' => $type,
             ];
