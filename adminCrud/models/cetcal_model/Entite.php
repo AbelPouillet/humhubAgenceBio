@@ -36,6 +36,8 @@ use Yii;
  * @property Production[] $productions
  * @property Joinsitewebentite[] $joinsitewebentites
  * @property Siteweb[] $sitewebs
+ * @property Joinentitetype[] $cetEntiteHasCetTypes
+ * @property Type[] $cetTypes
  */
 class Entite extends \yii\db\ActiveRecord
 {
@@ -56,8 +58,11 @@ class Entite extends \yii\db\ActiveRecord
             [['id'], 'required'],
             [['id', 'numeroBio'], 'integer'],
             [['isActive'], 'boolean'],
-            [['raisonSociale', 'denominationcourante'], 'string', 'max' => 512],
-            [['siret', 'telephone', 'email', 'codeNAF', 'gerant', 'dateMaj', 'telephoneCommerciale', 'reseau', 'mixite', 'provenance'], 'string', 'max' => 512],
+            [[
+                'raisonSociale', 'denominationcourante',
+                'siret', 'telephone', 'email', 'codeNAF',
+                'gerant', 'dateMaj', 'telephoneCommerciale', 'reseau', 'mixite', 'provenance'
+            ], 'string', 'max' => 512],
             [['id'], 'unique'],
         ];
     }
@@ -165,6 +170,17 @@ class Entite extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Infossupplementaires::className(), ['id' => 'cet_infos_supplementaires_id'])->viaTable('cet_infos_supplementaires_has_cet_entite', ['cet_entite_id' => 'id']);
     }
+    /**
+     * Gets query for [[CetEntiteHasCetTypes]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCetEntiteHasCetTypes()
+    {
+        return $this->hasMany(Joinentitetype::class, ['cet_entite_id' => 'id']);
+    }
+
+
 
     /**
      * Gets query for [[Joininfossupplementairesentites]].
@@ -174,6 +190,17 @@ class Entite extends \yii\db\ActiveRecord
     public function getJoininfossupplementairesentites()
     {
         return $this->hasMany(Joininfossupplementairesentite::className(), ['cet_entite_id' => 'id']);
+    }
+
+
+    /**
+     * Gets query for [[CetInfosSupplementairesValeur]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCetInfosSupplementairesValeur()
+    {
+        return $this->hasOne(CetInfosSupplementairesValeur::class, ['cet_entite_id' => 'id']);
     }
 
     /**
@@ -214,5 +241,15 @@ class Entite extends \yii\db\ActiveRecord
     public function getSitewebs()
     {
         return $this->hasMany(Siteweb::className(), ['id' => 'cet_site_web_id'])->viaTable('cet_site_web_has_cet_entite', ['cet_entite_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[CetTypes]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCetTypes()
+    {
+        return $this->hasMany(Type::class, ['id' => 'cet_type_id'])->viaTable('cet_entite_has_cet_type', ['cet_entite_id' => 'id']);
     }
 }
