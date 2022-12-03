@@ -55,8 +55,13 @@ ajouter les code naf en searchable
 ## Mapping codeNaf => types
 
 codeNaf Entite + codeNaf Production ==>> typesEntites => typescodeNafNiv2
-
+remplir la db 
 + moulinettes
+recherche par type
+producteur (01 / 02 / 10 / 11 / 20)
+commerçant (46 / 47)
+restaurant (56)
+
 
 ## Mise à jour de la prod
 

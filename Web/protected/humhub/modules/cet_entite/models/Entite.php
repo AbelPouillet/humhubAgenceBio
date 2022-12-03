@@ -10,12 +10,14 @@ use humhub\modules\cet_infos_supplementaires\models\Infossupplementaires;
 use humhub\modules\cet_join_activite_entite\models\Joinactiviteentite;
 use humhub\modules\cet_join_adresse_entite\models\Joinadresseentite;
 use humhub\modules\cet_join_categorie_entite\models\Joincategorieentite;
+use humhub\modules\cet_join_entite_type\models\Joinentitetype;
 use humhub\modules\cet_join_infos_supplementaires_entite\models\Joininfossupplementairesentite;
 use humhub\modules\cet_join_production_entite\models\Joinproductionentite;
 use humhub\modules\cet_join_site_web_entite\models\Joinsitewebentite;
 use humhub\modules\cet_production\models\Production;
 use humhub\modules\cet_produitnaf\models\Produitnaf;
 use humhub\modules\cet_site_web\models\Siteweb;
+use humhub\modules\cet_type\models\Type;
 use humhub\modules\search\interfaces\Searchable;
 use humhub\modules\cet_entite\widgets\Wall;
 
@@ -53,6 +55,8 @@ use Yii;
  * @property Production[] $productions
  * @property Joinsitewebentite[] $joinsitewebentites
  * @property Siteweb[] $sitewebs
+ * @property Joinentitetype[] $cetEntiteHasCetTypes
+ * @property Type[] $cetTypes
  */
 class Entite extends \yii\db\ActiveRecord implements Searchable
 {
@@ -232,6 +236,27 @@ class Entite extends \yii\db\ActiveRecord implements Searchable
     {
         return $this->hasMany(Siteweb::className(), ['id' => 'cet_site_web_id'])->viaTable('cet_site_web_has_cet_entite', ['cet_entite_id' => 'id']);
     }
+
+    /**
+     * Gets query for [[CetTypes]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCetTypes()
+    {
+        return $this->hasMany(Type::class, ['id' => 'cet_type_id'])->viaTable('cet_entite_has_cet_type', ['cet_entite_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[CetEntiteHasCetTypes]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCetEntiteHasCetTypes()
+    {
+        return $this->hasMany(Joinentitetype::class, ['cet_entite_id' => 'id']);
+    }
+
     /**
      * @return mixed
      */
@@ -250,12 +275,20 @@ class Entite extends \yii\db\ActiveRecord implements Searchable
             'categories' => $this->getCategoriesStr(),
             'activites' => $this->getActivitesStr(),
             'productions' => $this->getProductionsStr(),
-            'produits' => $this->getProduitsStr()
+            'produits' => $this->getProduitsStr(),
+            'codenaf' => $this->getCodenafStr(),
         ];
 
         return $attributes;
     }
-
+    public function getCodenafStr(){
+        $codenafs = "";
+        $codenafs .= $this->codeNAF;
+        foreach ($this->productions as $production){
+            $codenafs .= " , ".$production->code;
+        }
+        return $codenafs;
+    }
     public function getProduitsStr()
     {
         $produits = "";
@@ -265,8 +298,9 @@ class Entite extends \yii\db\ActiveRecord implements Searchable
             $codeNafNiv2 = isset($codeNafArray[1]) ? substr($codeNafArray[1], 0, 2) : '';
             foreach (Produitnaf::find()->all() as $produitnaf) {
                 if ($codeNafNiv2 != '' ?
-                str_starts_with($produitnaf->codenaf, $codeNafNiv1 . '.' . $codeNafNiv2)
-                : str_starts_with($produitnaf->codenaf, $codeNafNiv1)) {
+                    str_starts_with($produitnaf->codenaf, $codeNafNiv1 . '.' . $codeNafNiv2)
+                    : str_starts_with($produitnaf->codenaf, $codeNafNiv1)
+                ) {
                     $produits .= $produitnaf->cetProduit->nom . " , ";
                 }
             }
