@@ -359,7 +359,8 @@ MapAssetBundle::register($this);
                             case "01.49.21":
                                 icon_carto = cetIconApiculteur;
                                 break;
-                            case adresseCet.codeNAF.startsWith("10.71") ? adresseCet.codeNAF:
+                            case adresseCet.codeNAF.startsWith("10.71") ||
+                            adresseCet.codeNAF.startsWith("10.72") ? adresseCet.codeNAF:
                                 '' :
                                 icon_carto = cetIconBoulangerPatissier;
                                 break;
@@ -371,26 +372,30 @@ MapAssetBundle::register($this);
                                 '' :
                                 icon_carto = cetIconChampignons;
                                 break;
-                            /*case "circuit_court":
-                                icon_carto = cetIconCircuitCourt;
-                                break;*/
-                            case "10.39.22":
-                                //confiture
-                                icon_carto = cetIconConserveConfiture;
-                                break;
+                                /*case "circuit_court":
+                                    icon_carto = cetIconCircuitCourt;
+                                    break;*/
+                                /*case "10.39.22":
+                                    //confiture
+                                    icon_carto = cetIconConserveConfiture;
+                                    break;*/
                             case adresseCet.codeNAF.startsWith("10.39") ? adresseCet.codeNAF:
                                 '' :
                                 //conserve de fruits
                                 icon_carto = cetIconConserveConfiture;
                                 break;
-                            case "coop":
-                                icon_carto = cetIconCoop;
-                                break;
-                            case adresseCet.codeNAF.startsWith("01.24.29") ? adresseCet.codeNAF:
+                                /*case "coop":
+                                    icon_carto = cetIconCoop;
+                                    break;*/
+                            case adresseCet.codeNAF.startsWith("10.51") ? adresseCet.codeNAF:
                                 '' :
                                 icon_carto = cetIconFromage;
                                 break;
-                            case adresseCet.codeNAF.startsWith("10.51") ? adresseCet.codeNAF:
+                            case adresseCet.codeNAF.startsWith("01.22") ||
+                            adresseCet.codeNAF.startsWith("01.23") ||
+                            adresseCet.codeNAF.startsWith("01.24") ||
+                            adresseCet.codeNAF.startsWith("01.25") ||
+                            adresseCet.codeNAF.startsWith("01.26") ? adresseCet.codeNAF:
                                 '' :
                                 // variante à checker
                                 icon_carto = cetIconFruits;
@@ -403,7 +408,7 @@ MapAssetBundle::register($this);
                                 '' :
                                 icon_carto = cetIconGrandesCulturesCereales;
                                 break;
-                            case adresseCet.codeNAF.startsWith("01.27") || adresseCet.codeNAF.startsWith("01.19.10") || adresseCet.codeNAF.startsWith("01.19.10") ? adresseCet.codeNAF:
+                            case adresseCet.codeNAF.startsWith("01.3") ? adresseCet.codeNAF:
                                 '' :
                                 icon_carto = cetIconHorticulteur;
                                 break;
@@ -415,11 +420,12 @@ MapAssetBundle::register($this);
                                 '' :
                                 icon_carto = cetIconLegumes;
                                 break;
-                            case adresseCet.codeNAF.startsWith("01.47") ? adresseCet.codeNAF:
+                            case adresseCet.codeNAF.startsWith("01.47.2") ? adresseCet.codeNAF:
                                 '' :
                                 icon_carto = cetIconOeufs;
                                 break;
-                            case adresseCet.codeNAF.startsWith("10.20") ? adresseCet.codeNAF:
+                            case adresseCet.codeNAF.startsWith("10.20") ||
+                            adresseCet.codeNAF.startsWith("03") ? adresseCet.codeNAF:
                                 '' :
                                 icon_carto = cetIconPecheurCoquillages;
                                 break;
@@ -427,25 +433,28 @@ MapAssetBundle::register($this);
                                 '' :
                                 icon_carto = cetIconPlantes;
                                 break;
-                            case adresseCet.codeNAF.startsWith("01.11.9") ? adresseCet.codeNAF:
-                                '' :
-                                icon_carto = cetIconSemencierGraines;
-                                break;
-                            case adresseCet.codeNAF.startsWith("10.1") ? adresseCet.codeNAF:
+                                //TODO différencier d'horticulteur
+                                /*case adresseCet.codeNAF.startsWith("01.11.9") ? adresseCet.codeNAF:
+                                    '' :
+                                    icon_carto = cetIconSemencierGraines;
+                                    break;*/
+                            case adresseCet.codeNAF.startsWith("10.1") ||
+                            adresseCet.codeNAF.startsWith("01.4") ? adresseCet.codeNAF:
                                 '' :
                                 icon_carto = cetIconViande;
                                 break;
-                            case adresseCet.codeNAF.startsWith("01.21.1") || adresseCet.codeNAF.startsWith("11.02") ? adresseCet.codeNAF:
+                            case adresseCet.codeNAF.startsWith("01.21") ||
+                            adresseCet.codeNAF.startsWith("11.02") ? adresseCet.codeNAF:
                                 '' :
                                 icon_carto = cetIconViticulteur;
                                 break;
-                            case "marche":
+                            /*case "marche":
                                 icon_carto = cetAnnuaireMarcheIcon;
-                                break;
-                            case "amap":
+                                break;*/
+                            /*case "amap":
                                 icon_carto = amapIcon;
-                                break;
-                            case adresseCet.codeNAF.startsWith("47.11") ? adresseCet.codeNAF:
+                                break;*/
+                            case adresseCet.codeNAF.startsWith("47") ? adresseCet.codeNAF:
                                 "" :
                                 icon_carto = cetAnnuaireIcon_magasinBio;
                                 break;
