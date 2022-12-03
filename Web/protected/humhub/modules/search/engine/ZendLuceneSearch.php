@@ -95,7 +95,7 @@ class ZendLuceneSearch extends Search
             }
             //On ajoute la priorisation du champ productions
             $field = Field::Text($key, $val, 'UTF-8');
-            if ($key == 'productions') {
+            if ($key == 'productions' || $key == 'denominationcourante') {
                 $field->boost = 1000.0;
                 print 'boost production';
                 $doc->addField($field);
