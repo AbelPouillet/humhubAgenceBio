@@ -18,9 +18,11 @@ use app\models\cetcal_model\Jointypesitewebsiteweb;
 use app\models\cetcal_model\Production;
 use app\models\cetcal_model\Siteweb;
 use app\models\cetcal_model\Typeadresse;
+use app\models\cetcal_model\Type;
 use app\models\cetcal_model\Typesiteweb;
 use app\models\search_model\EntiteSearch;
 use \ForceUTF8\Encoding;
+use app\models\cetcal_model\Joinentitetype;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -134,6 +136,61 @@ class EntiteController extends Controller
         return $this->redirect(['index']);
     }
 
+    public function actionLink()
+    {
+        ini_set('memory_limit', '-1');
+        ini_set('max_execution_time', '300');
+        $error = "";
+        foreach (Entite::find()->all() as $entite) {
+            $defaultLink = new Joinentitetype();
+            $defaultLink->isDefault = true;
+            $defaultLink->cet_entite_id = $entite->id;
+            $typeId = 0;
+            $typenaf = "";
+
+            foreach (Type::find()->all() as $type) {
+                foreach ($type->cetCodeNafTypes as $codeNaf) {
+                    if (
+                        str_starts_with($entite->codeNAF, $codeNaf->codeNaf) &&
+                        strlen($typenaf) < strlen($codeNaf->codeNaf)
+                    ) {
+                        //On cherche le type par défaut le plus précis possible
+                        $typeId = $type->id;
+                        $typenaf = $codeNaf->codeNaf;
+                    }
+                }
+            }
+            if ($typeId == 0) {
+                $error .= "Pas de type pour le code " . $entite->codeNAF . " \n";
+            } else {
+                $defaultLink->cet_type_id = $typeId;
+                $defaultLink->save();
+            }
+
+            foreach ($entite->productions as $production) {
+                $codeHandled = false;
+                foreach (Type::find()->all() as $type) {
+                    $link = new Joinentitetype();
+                    $link->isDefault = false;
+                    $link->cet_entite_id = $entite->id;
+
+                    foreach ($type->cetCodeNafTypes as $codeNaf) {
+                        if (str_starts_with($production->code, $codeNaf->codeNaf)) {
+                            $link->cet_type_id = $type->id;
+                            $codeHandled = true;
+                        }
+                    }
+                    if ($link->cet_type_id) {
+                        $link->save();
+                    }
+                }
+                if (!$codeHandled) {
+                    $error .= " Pas de type pour le code " . $production->code . " \n";
+                }
+            }
+        }
+        return "linked " . $error;
+    }
     public function actionLoad()
     {
         ini_set('memory_limit', '-1');
