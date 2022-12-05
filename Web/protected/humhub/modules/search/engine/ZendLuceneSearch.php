@@ -61,7 +61,7 @@ class ZendLuceneSearch extends Search
      *
      * @see Lucene::getTermsPerQueryLimit()
      */
-    public $searchItemLimit = 2048;
+    public $searchItemLimit = 4096;
 
     /**
      * @inheritdoc
@@ -365,6 +365,17 @@ class ZendLuceneSearch extends Search
             $strQuery = "";
             foreach ($options['limitCategories'] as $categorie) {
                 $strQuery .= '(categoriesId:*_' . $categorie->id . '_*)';
+            }
+            $queryParserStr = new QueryParser();
+            $queryParserStr->setDefaultOperator(QueryParser::B_OR);
+            $queryStr = $queryParserStr->parse($strQuery);
+            //print $strQuery . "\n";
+            $query->addSubquery($queryStr, true);
+        }
+        if (count($options['limitTypes']) > 0) {
+            $strQuery = "";
+            foreach ($options['limitTypes'] as $type) {
+                $strQuery .= '(typesId:*_' . $type->id . '_*)';
             }
             $queryParserStr = new QueryParser();
             $queryParserStr->setDefaultOperator(QueryParser::B_OR);

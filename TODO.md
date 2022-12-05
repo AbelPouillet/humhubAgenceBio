@@ -152,6 +152,10 @@ code non gérer par nos type :
   GP.Compléments.alimentaires 
   .SGP.Plants 
 
+## TODO map les code naf textuels à leur code
+
+Dans la fonction load
+
 ## Mise à jour de la prod
 
 Une fois la recherche à jour sur les produits.

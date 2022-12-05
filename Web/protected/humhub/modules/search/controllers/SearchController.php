@@ -21,6 +21,7 @@ use humhub\modules\search\engine\Search;
 use humhub\modules\cet_entite\models\Entite;
 
 use humhub\modules\cet_commune\models\CetCommune;
+use humhub\modules\cet_type\models\Type;
 
 /**
  * Search Controller provides search functions inside the application.
@@ -78,6 +79,7 @@ class SearchController extends Controller
 
     public function actionIndex()
     {
+        ini_set('max_execution_time', '300');
         $model = new SearchForm();
         $model->load(Yii::$app->request->get());
 
@@ -118,6 +120,22 @@ class SearchController extends Controller
                 if ($categorie !== null) {
                     $limitCategories[] = $categorie;
                     $valueCategories[] = [$id => $categorie->nom];
+                }
+            }
+            $this->showResults = true;
+        }
+        $dataTypes = [];
+        foreach (Type::find()->all() as $type) {
+            $dataTypes[] = [$type->id => $type->nom];
+        }
+        $limitTypes = [];
+        $valueTypes = [];
+        if (!empty($model->limitTypesIds)) {
+            foreach ($model->limitTypesIds as $id) {
+                $type = Type::findOne(['id' => trim($id)]);
+                if ($type !== null) {
+                    $limitTypes[] = $type;
+                    $valueTypes[] = [$id => $type->nom];
                 }
             }
             $this->showResults = true;
@@ -186,6 +204,7 @@ class SearchController extends Controller
             'limitActivites' => $limitActivites,
             'limitCommunes' => $limitCommunes,
             'limitCategories' => $limitCategories,
+            'limitTypes' => $limitTypes,
             'distanceRecherche' => $this->distanceRecherche,
             'isCertifier' => $this->isCertifier,
             'startDatetime' => $this->startDatetime,
@@ -213,6 +232,7 @@ class SearchController extends Controller
                 'limitActivites' => $limitActivites,
                 'limitCommunes' => $limitCommunes,
                 'limitCategories' => $limitCategories,
+                'limitTypes' => $limitTypes,
                 'distanceRecherche' => $this->distanceRecherche,
                 'isCertifier' => $this->isCertifier,
                 'displayEvent' => false,
@@ -236,6 +256,9 @@ class SearchController extends Controller
             'limitCategories' => $limitCategories,
             'dataCategories' => $dataCategories,
             'valueCategories' => $valueCategories,
+            'limitTypes' => $limitTypes,
+            'dataTypes' => $dataTypes,
+            'valueTypes' => $valueTypes,
             'limitCommunes' => $limitCommunes,
             'distanceRecherche' => $this->distanceRecherche,
             'displayMap' => $displayMap,

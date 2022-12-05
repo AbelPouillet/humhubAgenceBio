@@ -275,17 +275,16 @@ class Entite extends \yii\db\ActiveRecord implements Searchable
             'categories' => $this->getCategoriesStr(),
             'activites' => $this->getActivitesStr(),
             'productions' => $this->getProductionsStr(),
-            'produits' => $this->getProduitsStr(),
-            'codenaf' => $this->getCodenafStr(),
+            'produits' => $this->getProduitsStr().$this->getCodenafStr(),
         ];
 
         return $attributes;
     }
     public function getCodenafStr(){
         $codenafs = "";
-        $codenafs .= $this->codeNAF;
+        $codenafs .= "naf".str_replace('.','',$this->codeNAF);
         foreach ($this->productions as $production){
-            $codenafs .= " , ".$production->code;
+            $codenafs .= " , naf".str_replace('.','',$production->code);
         }
         return $codenafs;
     }

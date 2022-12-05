@@ -169,6 +169,11 @@ abstract class Search extends Component
             foreach ($obj->categories as $categorie) {
                 $meta['categoriesId'] .= $categorie->id . "_";
             }
+            // Ajout des type
+            $meta['typesId'] = "_";
+            foreach ($obj->cetTypes as $type) {
+                $meta['typesId'] .= $type->id . "_";
+            }
             print($obj->denominationcourante . " ajout de ses activites et categories dans le tableau meta recherches .\n");
         }
 
