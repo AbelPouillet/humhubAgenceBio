@@ -207,6 +207,7 @@ class EntiteController extends Controller
                 if (isset($item['numeroBio'])) $modelEntite->numeroBio = intVal($item['numeroBio'], 10);
                 if (isset($item['telephone'])) $modelEntite->telephone = $item['telephone'];
                 if (isset($item['email'])) $modelEntite->email = $item['email'];
+                //TODO map code naf
                 if (isset($item['codeNAF'])) $modelEntite->codeNAF = $item['codeNAF'];
                 if (isset($item['gerant'])) $modelEntite->gerant = $item['gerant'];
                 if (isset($item['dateMaj'])) $modelEntite->dateMaj = $item['dateMaj'];
