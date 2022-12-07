@@ -22,6 +22,7 @@ use humhub\modules\cet_entite\models\Entite;
 
 use humhub\modules\cet_commune\models\CetCommune;
 use humhub\modules\cet_type\models\Type;
+use yii\helpers\ArrayHelper;
 
 /**
  * Search Controller provides search functions inside the application.
@@ -93,9 +94,8 @@ class SearchController extends Controller
             }
         }
         $dataActivites = [];
-        foreach (Activite::find()->all() as $activite) {
-            $dataActivites[] = [$activite->id => $activite->nom];
-        }
+        $activites = Activite::find()->select('id, nom')->all();
+        $dataActivites = ArrayHelper::map($activites, 'id', 'nom');
         $limitActivites = [];
         $valueActivites = [];
         if (!empty($model->limitActivitesIds)) {
@@ -109,9 +109,8 @@ class SearchController extends Controller
             $this->showResults = true;
         }
         $dataCategories = [];
-        foreach (Categorie::find()->all() as $categorie) {
-            $dataCategories[] = [$categorie->id => $categorie->nom];
-        }
+        $categories = Categorie::find()->select('id, nom')->all();
+        $dataCategories = ArrayHelper::map($categories, 'id', 'nom');
         $limitCategories = [];
         $valueCategories = [];
         if (!empty($model->limitCategoriesIds)) {
@@ -125,9 +124,9 @@ class SearchController extends Controller
             $this->showResults = true;
         }
         $dataTypes = [];
-        foreach (Type::find()->all() as $type) {
-            $dataTypes[] = [$type->id => $type->nom];
-        }
+        $types = Type::find()->select('id, nom')->all();
+        $dataTypes = ArrayHelper::map($types, 'id', 'nom');
+
         $limitTypes = [];
         $valueTypes = [];
         if (!empty($model->limitTypesIds)) {

@@ -56,7 +56,7 @@ humhub\modules\stream\assets\StreamAsset::register($this);
             $('#search-settings-link i').addClass('fa-caret-right');
         });
         //cache misére sur les clefs select2
-        $('.field-searchform-limitactivitesids').on('click', function() {
+        /*$('.field-searchform-limitactivitesids').on('click', function() {
             $('.select2-results__group').css('display', 'none');
         });
         $('.field-searchform-limitcategoriesids').on('click', function() {
@@ -65,6 +65,14 @@ humhub\modules\stream\assets\StreamAsset::register($this);
         $('.field-searchform-limittypesids').on('click', function() {
             $('.select2-results__group').css('display', 'none');
         });
+        $('input[name="SearchForm[limitActivitesIds]"]').on('keydown', function() {
+            alert('Search')
+            $('.select2-results__group').css('display', 'none');
+        })
+        $('input').on( 'keydown', function() {
+            alert('Search')
+            $('.select2-results__group').css('display', 'none');
+        })*/
         $('#commune_filter').on("change", function() {
             setTimeout(
                 function() {
