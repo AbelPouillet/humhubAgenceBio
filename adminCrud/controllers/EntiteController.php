@@ -207,7 +207,6 @@ class EntiteController extends Controller
                 if (isset($item['numeroBio'])) $modelEntite->numeroBio = intVal($item['numeroBio'], 10);
                 if (isset($item['telephone'])) $modelEntite->telephone = $item['telephone'];
                 if (isset($item['email'])) $modelEntite->email = $item['email'];
-                //TODO map code naf
                 if (isset($item['codeNAF'])) $modelEntite->codeNAF = $item['codeNAF'];
                 if (isset($item['gerant'])) $modelEntite->gerant = $item['gerant'];
                 if (isset($item['dateMaj'])) $modelEntite->dateMaj = $item['dateMaj'];
@@ -308,7 +307,8 @@ class EntiteController extends Controller
                             $modelProduction = Production::findOne(['id' => intVal($production['id'], 10)]) ?
                                 Production::findOne(['id' => intVal($production['id'], 10)]) : new Production();
                             $modelProduction->id = intVal($production['id'], 10);
-                            $modelProduction->code = $production['code'];
+                            //TODO map code naf
+                            $modelProduction->code = $this->mapCodeStr($production['code']);
                             $modelProduction->nom = $production['nom'];
                             if (isset($production['etatProductions'])) {
                                 foreach ($production['etatProductions'] as $etatProduction) {
@@ -386,6 +386,94 @@ class EntiteController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+    protected function mapCodeStr($code)
+    {
+        if (str_starts_with($code, "GP")) {
+            switch ($code) {
+                case 'GP.Viticulture.SGP.Viticulture':
+                    return "01.21";
+                case 'GP.Viticulture':
+                    return "01.21";
+                case 'GP.Stockage':
+                    return "52.10";
+                case 'GP.Services.et.traitements.primaires':
+                    return $code;
+                case 'GP.Semences.et.plants.SGP.Plants':
+                    return "01.3";
+                case 'GP.Semences.et.plants.SGP.Semences.fruitières':
+                    return "01.3";
+                case 'GP.Semences.et.plants.SGP.Autres.semences':
+                    return '01.3';
+                case "GP.Semences.et.plants.SGP.Semences.et.plants.potagers":
+                    return "01.3";
+                case 'GP.Semences.et.plants':
+                    return "01.3";
+                case 'GP.Restauration':
+                    return "56";
+                case 'GP.Produits.laitiers.SGP.Glaces.et.sorbets':
+                    return "10.52";
+                case "GP.Produits.d'épicerie":
+                    return "47";
+                case "GP.Préparations.à.base.de.fruits.et.légumes":
+                    return "10.3";
+                case "GP.Plantes.à.parfums,.aromatiques.et.médicinales.et.plantes.à.boissons.SGP.Plantes.à.parfum.et.médicinales":
+                    return "01.28";
+                case "GP.Plantes.à.parfums,.aromatiques.et.médicinales.et.plantes.à.boissons.SGP.Épices.et.herbes.fraîches":
+                    return "01.28";
+                case "GP.Plantes.à.parfums,.aromatiques.et.médicinales.et.plantes.à.boissons":
+                    return "01.27";
+                case "GP.Ovins.SGP.Ovins.Viande":
+                    return "01.45";
+                case "GP.Légumes.SGP.Légumes.à.racine,.à.bulbe.ou.à.tubercules":
+                    return "01.13";
+                case "GP.Légumes.SGP.Légumes.à.fruits":
+                    return "01.13";
+                case "GP.Légumes.SGP.Légumes.à.feuilles.ou.tiges":
+                    return "01.13";
+                case "GP.Légumes":
+                    return "01.13";
+                case "GP.Légumes.SGP.Autres.légumes.frais.et.maraîchage":
+                    return "01.13";
+                case "GP.Grandes.Cultures.SGP.Céréales":
+                    return "01.11";
+                case "GP.Grandes.Cultures":
+                    return "01.1";
+                case "GP.Fruits":
+                    return "01.24";
+                case "GP.Fruits.SGP.Fruits.tropicaux.et.subtropicaux":
+                    return "01.22";
+                case "GP.Fruits.SGP.Fruits.à.pépins.et.à.noyaux":
+                    return "01.24";
+                case "GP.Fruits.SGP.Baies":
+                    return "01.25";
+                case "GP.Fruits.SGP.Autres.fruits.frais":
+                    return "01.25";
+                case "GP.Fruits.SGP.Agrumes":
+                    return "01.23";
+                case "GP.Bois.et.cueillette.sauvage.SGP.Produits.sylvicoles":
+                    return "02";
+                case "GP.Autres.productions.végétales.SGP.Fleurs":
+                    return "01.29";
+                case "GP.Compléments.alimentaires":
+                    return "10.89";
+                case "GP.Commerce.de.gros":
+                    return "46";
+                case "GP.Commerce.de.détail":
+                    return "47";
+                case "GP.Bovins.SGP.Bovins.viande":
+                    return "01.42";
+                case "GP.Boulangerie-pâtisserie.et.pâtes.alimentaires":
+                    return "10.7";
+                case "GP.Boissons.(hors.jus)":
+                    return "11";
+                case "GP.Autres.produits.transformés":
+                    return "10.39";
+                case "GP.Aquaculture.et.récolte.de.sel":
+                    return "03.2";
+            }
+        }
+        return $code;
     }
     protected function curlPage($page, $distanceScan, $resultTab)
     {
