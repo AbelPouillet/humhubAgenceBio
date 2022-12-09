@@ -452,7 +452,7 @@ class EntiteController extends Controller
                 case "GP.Fruits.SGP.Agrumes":
                     return "01.23";
                 case "GP.Bois.et.cueillette.sauvage.SGP.Produits.sylvicoles":
-                    return "02";
+                    return "02.3";
                 case "GP.Autres.productions.végétales.SGP.Fleurs":
                     return "01.29";
                 case "GP.Compléments.alimentaires":
