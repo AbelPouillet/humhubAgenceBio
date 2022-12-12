@@ -69,9 +69,11 @@ Dans la fonction load DONE
 Préparer les données pour la prod, 
 
 
-## Mise à jour de la prod
+## Mise à jour de la prod DONE
 
 Une fois la recherche à jour sur les produits.
+
+## Details Entite
 
 ## Moulinnette données cetcal vers humhubAgenceBio
 

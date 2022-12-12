@@ -100,8 +100,8 @@ class Adresse extends \yii\db\ActiveRecord
 
     public function getTypeadressesSTR()
     {
+        $types = "";
         foreach ($this->typeadresses as $index => $index) {
-            $types = "";
             if ($index == 0) {
                 $types .= $this->typeadresses[0]->nom;
             } else {
