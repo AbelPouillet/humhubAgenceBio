@@ -31,21 +31,45 @@ AppAsset::register($this);
         'brandLabel' => Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
-            'class' => 'navbar navbar-expand-md navbar-dark bg-dark fixed-top',
+            'class' => 'navbar navbar-dark bg-dark fixed-top navbar-expand-md',
         ],
     ]);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav'],
         'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
+            ['label' => 'Home', 'url' => ['/site/index'] , 'dropdownOptions' =>['']],
             /*['label' => 'About', 'url' => ['/site/about']],
             ['label' => 'Contact', 'url' => ['/site/contact']],*/
-            ['label' => 'Entite', 'url' => ['/entite/index']],
+            ['label' => 'Entité', 'url' => ['/entite/index']],
             ['label' => 'Produit', 'url' => ['/produit/index']],
             ['label' => 'Produitnaf', 'url' => ['/produitnaf/index']],
             ['label' => 'Infos Supplementaire', 'url' => ['/infossupplementaires/index']],
             ['label' => 'Valeur infos supplementaires', 'url' => ['/infossupplementairesvaleur/index']],
             ['label' => 'Communes', 'url' => ['/communes/index']],
+            ['label' => 'Activités', 'url' => ['/activite/index']],
+            ['label' => 'Adresse' , 'url' => ['/adresse/index']],
+            ['label' => 'Catégorie', 'url' => ['/categorie/index']],
+            ['label' => 'état production', 'url' => ['/etatproduction/index']],
+            ['label' => 'Certificat', 'url' => ['/certificat/index']],
+            ['label' => 'CodeNaf Type', 'url' => ['/codenaftype/index']],
+            ['label' =>' Tables de jointure','dropdownOptions' => ['class' => 'pre-scrollable'],
+            'items' => [['label' => 'Join Activités Entités', 'url' => ['/joinactiviteentite/index']],
+                ['label' => 'Join Adresses Entités', 'url' => ['/joinadresseentite/index']],
+                ['label' => 'Join Catégories Entités', 'url' => ['/joincategorieentite/index']],
+                ['label' => 'Join Types Entités', 'url' => ['/joinentitetype/index']],
+                ['label' => 'Join état-production Production', 'url' => ['/joinetatproductionproduction/index']],
+                ['label' => 'Join infos supplementaire Entités', 'url' => ['/joininfossupplementairesentite/index']],
+                ['label' => 'Join Production Entités', 'url' => ['/joinproductionentite/index']],
+                ['label' => 'Join SiteWeb Entités', 'url' => ['/joinsitewebentite/index']],
+                ['label' => 'Join SiteWeb TypeSiteWeb', 'url' => ['/jointypesitewebsiteweb/index']],]
+            ],
+            ['label' => 'Production', 'url' => ['/production/index']],
+            ['label' => 'SiteWeb', 'url' => ['/siteweb/index']],
+            ['label' => 'Type', 'url' => ['/type/index']],
+            ['label' => 'Type SiteWeb', 'url' => ['/typesiteweb/index']],
+
+
+
             Yii::$app->user->isGuest ? (
                 ['label' => 'Login', 'url' => ['/site/login']]
             ) : (
