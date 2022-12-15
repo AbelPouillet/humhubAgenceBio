@@ -1,5 +1,6 @@
 <?php
 
+
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -32,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'nom',
             [
                 'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, Activite $model, $key, $index, $column) {
+                'urlCreator' => function ($action, \app\models\cetcal_model\Activite $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
                  }
             ],

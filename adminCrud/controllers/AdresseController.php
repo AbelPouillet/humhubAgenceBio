@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\cetcal_model\Adresse;
+use app\models\cetcal_model\Typeadresse;
 use app\models\search_model\AdresseSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -68,9 +69,12 @@ class AdresseController extends Controller
     public function actionCreate()
     {
         $model = new Adresse();
-
+        $modelTypeAdresse = new Typeadresse();
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
+                $modelTypeAdresse->pk_cet_adresse_operateur = $model->id;
+                $modelTypeAdresse->nom = $_POST['Typeadresse']['nom'];
+                $modelTypeAdresse->save();
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
@@ -92,8 +96,11 @@ class AdresseController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
+        $modelTypeAdresse = new Typeadresse();
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+            $modelTypeAdresse->pk_cet_adresse_operateur = $model->id;
+            $modelTypeAdresse->nom = $_POST['Typeadresse']['nom'];
+            $modelTypeAdresse->save();
             return $this->redirect(['view', 'id' => $model->id]);
         }
 

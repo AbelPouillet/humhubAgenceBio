@@ -1,5 +1,6 @@
 <?php
 
+use app\models\cetcal_model\Categorie;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
