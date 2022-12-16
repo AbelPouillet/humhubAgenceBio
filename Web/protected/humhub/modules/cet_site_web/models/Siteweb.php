@@ -99,4 +99,11 @@ class Siteweb extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Typesiteweb::className(), ['id' => 'cet_type_site_web_id'])->viaTable('cet_type_site_web_has_cet_site_web', ['cet_site_web_id' => 'id']);
     }
+    public function getTypesitewebsStr(){
+        $typesSTR = "";
+        foreach ($this->typesitewebs as $type){
+            $typesSTR .= $type->nom." ";
+        }
+        return $typesSTR;
+    }
 }

@@ -80,6 +80,7 @@ class SearchController extends Controller
 
     public function actionIndex()
     {
+        ini_set('memory_limit', '-1');
         ini_set('max_execution_time', '300');
         $model = new SearchForm();
         $model->load(Yii::$app->request->get());
