@@ -32,8 +32,6 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'departementId')->textInput() ?>
 
-    <?= $form->field(new Typeadresse(), 'nom')->textInput()->label('Type Adresse')->placeholder('Ajouter un Type adresse') ?>
-
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
     </div>

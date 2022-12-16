@@ -67,6 +67,7 @@ AppAsset::register($this);
             ['label' => 'SiteWeb', 'url' => ['/siteweb/index']],
             ['label' => 'Type', 'url' => ['/type/index']],
             ['label' => 'Type SiteWeb', 'url' => ['/typesiteweb/index']],
+            ['label' => 'Type Adresse', 'url' => ['/typeadresse/index']],
 
 
 

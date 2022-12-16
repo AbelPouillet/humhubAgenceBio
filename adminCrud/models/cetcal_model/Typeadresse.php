@@ -7,10 +7,11 @@ use Yii;
 /**
  * This is the model class for table "cet_type_adresse_operateur".
  *
+ * @property int $id
  * @property int $pk_cet_adresse_operateur
  * @property string|null $nom
  *
- * @property Adresse $pkAdresse
+ * @property Adresse $pkCetAdresseOperateur
  */
 class Typeadresse extends \yii\db\ActiveRecord
 {
@@ -31,7 +32,7 @@ class Typeadresse extends \yii\db\ActiveRecord
             [['pk_cet_adresse_operateur'], 'required'],
             [['pk_cet_adresse_operateur'], 'integer'],
             [['nom'], 'string', 'max' => 512],
-            [['pk_cet_adresse_operateur'], 'exist', 'skipOnError' => true, 'targetClass' => Adresse::className(), 'targetAttribute' => ['pk_cet_adresse_operateur' => 'id']],
+            [['pk_cet_adresse_operateur'], 'exist', 'skipOnError' => true, 'targetClass' => Adresse::class, 'targetAttribute' => ['pk_cet_adresse_operateur' => 'id']],
         ];
     }
 
@@ -41,18 +42,19 @@ class Typeadresse extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
+            'id' => 'ID',
             'pk_cet_adresse_operateur' => 'Pk Cet Adresse Operateur',
             'nom' => 'Nom',
         ];
     }
 
     /**
-     * Gets query for [[PkAdresse]].
+     * Gets query for [[PkCetAdresseOperateur]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getPkAdresse()
+    public function getPkCetAdresseOperateur()
     {
-        return $this->hasOne(Adresse::className(), ['id' => 'pk_cet_adresse_operateur']);
+        return $this->hasOne(Adresse::class, ['id' => 'pk_cet_adresse_operateur']);
     }
 }

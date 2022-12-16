@@ -2,17 +2,16 @@
 
 namespace app\controllers;
 
-use app\models\cetcal_model\Adresse;
 use app\models\cetcal_model\Typeadresse;
-use app\models\search_model\AdresseSearch;
+use app\models\search_model\TypeadresseSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * AdresseController implements the CRUD actions for Adresse model.
+ * TypeadresseController implements the CRUD actions for Typeadresse model.
  */
-class AdresseController extends Controller
+class TypeadresseController extends Controller
 {
     /**
      * @inheritDoc
@@ -33,13 +32,13 @@ class AdresseController extends Controller
     }
 
     /**
-     * Lists all Adresse models.
+     * Lists all Typeadresse models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new AdresseSearch();
+        $searchModel = new TypeadresseSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -49,7 +48,7 @@ class AdresseController extends Controller
     }
 
     /**
-     * Displays a single Adresse model.
+     * Displays a single Typeadresse model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -62,13 +61,14 @@ class AdresseController extends Controller
     }
 
     /**
-     * Creates a new Adresse model.
+     * Creates a new Typeadresse model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new Adresse();
+        $model = new Typeadresse();
+
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
@@ -83,7 +83,7 @@ class AdresseController extends Controller
     }
 
     /**
-     * Updates an existing Adresse model.
+     * Updates an existing Typeadresse model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -92,6 +92,7 @@ class AdresseController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
@@ -102,7 +103,7 @@ class AdresseController extends Controller
     }
 
     /**
-     * Deletes an existing Adresse model.
+     * Deletes an existing Typeadresse model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -116,15 +117,15 @@ class AdresseController extends Controller
     }
 
     /**
-     * Finds the Adresse model based on its primary key value.
+     * Finds the Typeadresse model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Adresse the loaded model
+     * @return Typeadresse the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Adresse::findOne(['id' => $id])) !== null) {
+        if (($model = Typeadresse::findOne(['id' => $id])) !== null) {
             return $model;
         }
 
