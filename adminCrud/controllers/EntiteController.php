@@ -135,11 +135,14 @@ class EntiteController extends Controller
 
         return $this->redirect(['index']);
     }
-
-    public function actionLink()
+    public function clearTypeEntite(){
+        foreach(Joinentitetype::find()->all() as $link){
+            $link->delete();
+        }
+    }
+    public function linkTypes()
     {
-        ini_set('memory_limit', '-1');
-        ini_set('max_execution_time', '300');
+        $this->clearTypeEntite();
         $error = "";
         foreach (Entite::find()->all() as $entite) {
             $defaultLink = new Joinentitetype();
@@ -194,7 +197,7 @@ class EntiteController extends Controller
     public function actionLoad()
     {
         ini_set('memory_limit', '-1');
-        ini_set('max_execution_time', '300');
+        ini_set('max_execution_time', '600');
         $jsonTab = $this->curlPage(0, 0, []);
         if (isset($jsonTab)) {
             foreach ($jsonTab as $item) {
@@ -369,7 +372,7 @@ class EntiteController extends Controller
             }
         }
 
-        return count($jsonTab) . ' entries loaded successfully';
+        return count($jsonTab) . ' entries loaded successfully. '. $this->linkTypes();
         //return $this->redirect(['index']);
     }
     /**

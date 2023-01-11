@@ -35,20 +35,6 @@ $this->params['breadcrumbs'][] = $this->title;
         })
         $('#islinking').hide();
 
-        $('#link').on('click', async function() {
-            $('#islinking').show();
-            $.ajax({
-                type: 'GET',
-                url: 'index.php?r=entite%2Flink',
-
-            }).done(function(data) {
-                $('#islinking').hide();
-                console.log(data);
-            }).catch(error => {
-                $('#islinking').hide();
-                console.error(error); 
-            })
-        })
     });
 
 
@@ -63,13 +49,10 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
 
     <button id="load" type="button" class="col-2 btn btn-primary">
-        <i id="isloading" class="fa fa-circle-o-notch fa-spin"></i> Loading
+        <i id="isloading" class="fa fa-circle-o-notch fa-spin"></i> MAJ Agencebio
     </button>
     <?php // echo $this->render('_search', ['model' => $searchModel]); 
     ?>
-    <button id="link" type="button" class="col-2 btn btn-primary">
-        <i id="islinking" class="fa fa-circle-o-notch fa-spin"></i> Link Type
-    </button>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
