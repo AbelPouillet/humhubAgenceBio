@@ -330,7 +330,7 @@ MapAssetBundle::register($this);
                     });
 
                     var associationsIcon = L.icon({
-                        iconUrl: 'res/content/icons/bonpour1tour/withbg/assodist.png',
+                        iconUrl: 'assets/images/pictos_site_CAL/coop.gif',
                         iconSize: [50, 50],
                         popupAnchor: [0, -20],
                         type: 'Associations liées à la BIO Locale'
@@ -338,6 +338,16 @@ MapAssetBundle::register($this);
                     icons_array.push({
                         icon: associationsIcon,
                         desc: 'Associations liée à la BIO Locale (distribution possible)'
+                    });
+                    var associationsDistIcon = L.icon({
+                        iconUrl: 'assets/images/pictos_site_CAL/circuit_court.gif',
+                        iconSize: [50, 50],
+                        popupAnchor: [0, -20],
+                        type: 'Associations de distribution liées à la BIO Locale'
+                    });
+                    icons_array.push({
+                        icon: associationsDistIcon,
+                        desc: 'Associations de distribution liée à la BIO Locale (distribution possible)'
                     });
                 }
                 L.tileLayer('<?= $osmTileServer ?>', {
@@ -351,7 +361,24 @@ MapAssetBundle::register($this);
                         console.log(adresseCet.codeNAF);
                         switch (adresseCet.codeNAF) {
                             case null:
-                                adresseCet.defaultIcon == 'magasin' ? icon_carto = cetAnnuaireIcon_magasinBio : icon_carto = cetIconProducteur;
+                                if (adresseCet.defaultIcon == 'magasin'){
+                                    icon_carto = cetAnnuaireIcon_magasinBio
+                                }
+                                if(adresseCet.defaultIcon == 'ferme'){
+                                    icon_carto = cetIconProducteur
+                                }
+                                if(adresseCet.defaultIcon == 'marché'){
+                                    icon_carto = cetAnnuaireMarcheIcon
+                                }
+                                if(adresseCet.defaultIcon == 'AMAP'){
+                                    icon_carto = amapIcon
+                                }
+                                if(adresseCet.defaultIcon == 'Asso'){
+                                    icon_carto = associationsIcon
+                                }
+                                if(adresseCet.defaultIcon == 'AssoDist'){
+                                    icon_carto = associationsDistIcon
+                                }
                                 break;
                             case "03.00.64":
                                 icon_carto = cetIconAlgues;
@@ -467,7 +494,7 @@ MapAssetBundle::register($this);
                             icon: icon_carto
                         });
                         // A MODIFIER URL PROD
-                        marker.bindPopup('<b>' + adresseCet.name + '</b><br>' + adresseCet.type + '<br>' + '<a href="http://localhost:9081/index.php?r=cet_entite%2Fdetail&id=' + adresseCet.id + '"> détail </a>');
+                        marker.bindPopup('<b>' + adresseCet.name + '</b><br>' + adresseCet.type + '<br>' + '<a href="http://localhost:9081/index.php?r=cet_entite%2Fdetail&id=' + adresseCet.id + '" target="_blank"> détail </a>');
                         markers.addLayer(marker);
                     }
                 });

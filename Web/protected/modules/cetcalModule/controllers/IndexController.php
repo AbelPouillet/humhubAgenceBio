@@ -13,6 +13,7 @@ use humhub\components\Controller;
 
 class IndexController extends Controller {
     public function actionIndex() {
+        ini_set('memory_limit', '-1');
         $settings = Yii::$app->getModule('cetcalModule')->settings;
 
         return $this->render('index', [

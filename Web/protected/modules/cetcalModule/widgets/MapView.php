@@ -80,6 +80,18 @@ class MapView extends Widget
                         $defaultIcon = 'ferme';
                     }
                 }
+                if (isset($cetEntite->cetTypes[0]) && $cetEntite->cetTypes[0]->id == 22) {
+                    $defaultIcon = 'marché';
+                }
+                if ( isset($cetEntite->cetTypes[0]) && $cetEntite->cetTypes[0]->id == 23) {
+                    $defaultIcon = 'AMAP';
+                }
+                if ( isset($cetEntite->cetTypes[0]) && $cetEntite->cetTypes[0]->id == 24) {
+                    $defaultIcon = 'Asso';
+                }
+                if ( isset($cetEntite->cetTypes[0]) && $cetEntite->cetTypes[0]->id == 26) {
+                    $defaultIcon = 'AssoDist';
+                }
                 foreach ($cetEntite->adresses as $adresseCet) {
                     isset($cetEntite->denominationcourante) ? $name = $cetEntite->denominationcourante : $name = $cetEntite->raisonSociale;
                     $formatedAdresseCets[] = [
@@ -100,6 +112,24 @@ class MapView extends Widget
         }
         $formatedAdresseCets = [];
         foreach (Entite::findAll(['isActive' => 1]) as $entiteCet) {
+            $defaultIcon = 'magasin';
+            foreach ($entiteCet->activites as $activite) {
+                if ($activite->id == 1) {
+                    $defaultIcon = 'ferme';
+                }
+            }
+            if (isset($entiteCet->cetTypes[0]) && $entiteCet->cetTypes[0]->id == 22) {
+                $defaultIcon = 'marché';
+            }
+            if (isset($entiteCet->cetTypes[0]) && $entiteCet->cetTypes[0]->id == 23) {
+                $defaultIcon = 'AMAP';
+            }
+            if (isset($entiteCet->cetTypes[0]) && $entiteCet->cetTypes[0]->id == 24) {
+                $defaultIcon = 'Asso';
+            }
+            if (isset($entiteCet->cetTypes[0]) && $entiteCet->cetTypes[0]->id == 26) {
+                $defaultIcon = 'AssoDist';
+            }
             foreach ($entiteCet->adresses as $adresseCet) {
                 isset($entiteCet->denominationcourante) ? $name = $entiteCet->denominationcourante : $name = $entiteCet->raisonSociale;
                 $formatedAdresseCets[] = [
@@ -111,6 +141,7 @@ class MapView extends Widget
                     'city' => $adresseCet->ville,
                     'latitude' => floatval($adresseCet->lat),
                     'longitude' => floatval($adresseCet->long),
+                    'defaultIcon' => $defaultIcon,
                     'id' => $entiteCet->id
                 ];
             }
