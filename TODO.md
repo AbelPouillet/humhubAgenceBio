@@ -44,5 +44,9 @@ Faire Les types à la suite de la mise à jour .
 
 ## Intégration lieux de vente map
 
+Modifier le wall pour les lieux de vente
 
+Modifier le détail pour les lieux de ventes
+
+Mis en prod vendredi 11 h
 ## Optimiser la recherche

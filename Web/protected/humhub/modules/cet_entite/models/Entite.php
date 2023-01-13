@@ -331,6 +331,17 @@ class Entite extends \yii\db\ActiveRecord implements Searchable
         return $activites;
     }
 
+    public function getTypeStr(){
+        $types = "";
+        foreach ($this->cetTypes as $index => $index) {
+            if ($index == 0) {
+                $types .= $this->cetTypes[0]->nom;
+            } else {
+                $types .= ", " . $this->cetTypes[$index]->nom;
+            }
+        }
+        return $types;
+    }
     public function getProductionsStr()
     {
         $productions = "";

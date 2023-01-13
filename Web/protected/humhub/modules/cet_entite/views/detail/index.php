@@ -1,5 +1,6 @@
 <?php
 
+use humhub\modules\cet_infos_supplementaires_valeur\models\Infossupplementairesvaleur;
 use yii\helpers\Html;
 
 ?>
@@ -46,6 +47,12 @@ use yii\helpers\Html;
         if($cet_entite->sitewebs){
             foreach ($cet_entite->sitewebs as $siteweb){
                 echo isset($siteweb->typesitewebs) ? '<a href='.$siteweb->url.'>'.$siteweb->getTypesitewebsStr().'</a><br>' : '';
+            }
+        }
+        if($cet_entite->infossupplementaires){
+            foreach($cet_entite->infossupplementaires as $infossupplementaire){
+                $valeur = Infossupplementairesvaleur::findOne(['cet_entite_id' => $cet_entite->id, 'pk_cet_infos_supplementaires' => $infossupplementaire->id]);
+                echo '<div><strong>' . $infossupplementaire->label . ':</strong> ' . $valeur->valeur . '</div>';
             }
         }
         ?>
