@@ -88,7 +88,7 @@ class EntiteController extends Controller
     public function actionCreate()
     {
         $model = new Entite();
-
+        $model->dateMaj = date("Y-m-d");
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
@@ -112,7 +112,7 @@ class EntiteController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
+        $model->dateMaj = date("Y-m-d");
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
@@ -135,72 +135,24 @@ class EntiteController extends Controller
 
         return $this->redirect(['index']);
     }
-    public function clearTypeEntite(){
-        foreach(Joinentitetype::find()->all() as $link){
+    public function clearTypeEntite($idEntite)
+    {
+        foreach (Joinentitetype::find()->where(['cet_entite_id' => $idEntite]) as $link) {
             $link->delete();
         }
     }
-    public function linkTypes()
-    {
-        $this->clearTypeEntite();
-        $error = "";
-        foreach (Entite::find()->all() as $entite) {
-            $defaultLink = new Joinentitetype();
-            $defaultLink->isDefault = true;
-            $defaultLink->cet_entite_id = $entite->id;
-            $typeId = 0;
-            $typenaf = "";
-
-            foreach (Type::find()->all() as $type) {
-                foreach ($type->cetCodeNafTypes as $codeNaf) {
-                    if (
-                        str_starts_with($entite->codeNAF, $codeNaf->codeNaf) &&
-                        strlen($typenaf) < strlen($codeNaf->codeNaf)
-                    ) {
-                        //On cherche le type par défaut le plus précis possible
-                        $typeId = $type->id;
-                        $typenaf = $codeNaf->codeNaf;
-                    }
-                }
-            }
-            if ($typeId == 0) {
-                $error .= "Pas de type pour le code " . $entite->codeNAF . " \n";
-            } else {
-                $defaultLink->cet_type_id = $typeId;
-                $defaultLink->save();
-            }
-
-            foreach ($entite->productions as $production) {
-                $codeHandled = false;
-                foreach (Type::find()->all() as $type) {
-                    $link = new Joinentitetype();
-                    $link->isDefault = false;
-                    $link->cet_entite_id = $entite->id;
-
-                    foreach ($type->cetCodeNafTypes as $codeNaf) {
-                        if (str_starts_with($production->code, $codeNaf->codeNaf)) {
-                            $link->cet_type_id = $type->id;
-                            $codeHandled = true;
-                        }
-                    }
-                    if ($link->cet_type_id) {
-                        $link->save();
-                    }
-                }
-                if (!$codeHandled) {
-                    $error .= " Pas de type pour le code " . $production->code . " \n";
-                }
-            }
-        }
-        return "linked " . $error;
-    }
     public function actionLoad()
     {
+        // Changer les limites d'espace et de temps allouer pour la fonction
         ini_set('memory_limit', '-1');
         ini_set('max_execution_time', '600');
+        $error = "";
+        //récupération des données agence bio
         $jsonTab = $this->curlPage(0, 0, []);
         if (isset($jsonTab)) {
+            //parcour des entites agenceBio
             foreach ($jsonTab as $item) {
+                //Création ou MAJ des entité agence Bio
                 $modelEntite = Entite::findOne(['id' => intVal($item['id'], 10)])
                     ? Entite::findOne(['id' => intVal($item['id'], 10)]) : new Entite();
                 $modelEntite->id = intVal($item['id'], 10);
@@ -211,6 +163,33 @@ class EntiteController extends Controller
                 if (isset($item['telephone'])) $modelEntite->telephone = $item['telephone'];
                 if (isset($item['email'])) $modelEntite->email = $item['email'];
                 if (isset($item['codeNAF'])) $modelEntite->codeNAF = $item['codeNAF'];
+                //TODO: Création du type par défaut en fonction du code naf 
+                //Suppression des type existant
+                $this->clearTypeEntite(intVal($item['id'], 10));
+                $defaultLink = new Joinentitetype();
+                $defaultLink->isDefault = true;
+                $defaultLink->cet_entite_id = intVal($item['id'], 10);
+                $typeId = 0;
+                $typenaf = "";
+
+                foreach (Type::find()->all() as $type) {
+                    foreach ($type->cetCodeNafTypes as $codeNaf) {
+                        if (
+                            str_starts_with($modelEntite->codeNAF, $codeNaf->codeNaf) &&
+                            strlen($typenaf) < strlen($codeNaf->codeNaf)
+                        ) {
+                            //On cherche le type par défaut le plus précis possible
+                            $typeId = $type->id;
+                            $typenaf = $codeNaf->codeNaf;
+                        }
+                    }
+                }
+                if ($typeId == 0) {
+                    $error .= "Pas de type pour le code " . $modelEntite->codeNAF . " \n";
+                } else {
+                    $defaultLink->cet_type_id = $typeId;
+                    $defaultLink->save();
+                }
                 if (isset($item['gerant'])) $modelEntite->gerant = $item['gerant'];
                 if (isset($item['dateMaj'])) $modelEntite->dateMaj = $item['dateMaj'];
                 if (isset($item['telephoneCommerciale'])) $modelEntite->telephoneCommerciale = $item['telephoneCommerciale'];
@@ -219,6 +198,7 @@ class EntiteController extends Controller
                 $modelEntite->provenance = 'API Agence Bio';
                 $modelEntite->isActive = true;
                 if ($modelEntite->save()) {
+                    //Création ou MAJ des Categories
                     if (isset($item['categories'])) {
                         foreach ($item['categories'] as $categorie) {
                             $modelCategory = Categorie::findOne(['id' => intVal($categorie['id'], 10)])
@@ -236,6 +216,7 @@ class EntiteController extends Controller
                             }
                         }
                     }
+                    //Création ou MAJ des sites Web
                     if (isset($item['siteWebs'])) {
                         foreach ($item['siteWebs'] as $site) {
                             $modelSite = SiteWeb::findOne(['id' => intVal($site['id'], 10)])
@@ -268,6 +249,7 @@ class EntiteController extends Controller
                             $modelJoinSiteEntite->save();
                         }
                     }
+                    //Création ou MAJ des adresses
                     if (isset($item['adressesOperateurs'])) {
                         foreach ($item['adressesOperateurs'] as $adresse) {
 
@@ -305,12 +287,13 @@ class EntiteController extends Controller
                             }
                         }
                     }
+                    //Créations ou maj des productions
                     if (isset($item['productions'])) {
                         foreach ($item['productions'] as $production) {
                             $modelProduction = Production::findOne(['id' => intVal($production['id'], 10)]) ?
                                 Production::findOne(['id' => intVal($production['id'], 10)]) : new Production();
                             $modelProduction->id = intVal($production['id'], 10);
-                            //TODO map code naf
+                            // map code naf
                             $modelProduction->code = $this->mapCodeStr($production['code']);
                             $modelProduction->nom = $production['nom'];
                             if (isset($production['etatProductions'])) {
@@ -333,8 +316,29 @@ class EntiteController extends Controller
                             $modelJoinProductionEntite->cet_production_id = intVal($production['id'], 10);
                             $modelJoinProductionEntite->cet_entite_id = intVal($item['id'], 10);
                             $modelJoinProductionEntite->save();
+                            //TODO: ajout du type en fonction de la production
+                            $codeHandled = false;
+                            foreach (Type::find()->all() as $type) {
+                                $link = new Joinentitetype();
+                                $link->isDefault = false;
+                                $link->cet_entite_id = intVal($item['id'], 10);
+
+                                foreach ($type->cetCodeNafTypes as $codeNaf) {
+                                    if (str_starts_with($production->code, $codeNaf->codeNaf)) {
+                                        $link->cet_type_id = $type->id;
+                                        $codeHandled = true;
+                                    }
+                                }
+                                if ($link->cet_type_id) {
+                                    $link->save();
+                                }
+                            }
+                            if (!$codeHandled) {
+                                $error .= " Pas de type pour le code " . $production->code . " \n";
+                            }
                         }
                     }
+                    //Créations ou MAJ des Activites
                     if (isset($item['activites'])) {
                         foreach ($item['activites'] as $activite) {
                             $modelActivite = Activite::findOne(['id' => intVal($activite['id'], 10)]) ?
@@ -349,6 +353,7 @@ class EntiteController extends Controller
                             $modelJoinActiviteEntite->save();
                         }
                     }
+                    //Créations ou Maj des Certificats
                     if (isset($item['certificats'])) {
                         foreach ($item['certificats'] as $certificat) {
                             $modelCertificat = Certificat::find()->where(['url' => $certificat['url']])->one() ?
@@ -372,7 +377,7 @@ class EntiteController extends Controller
             }
         }
 
-        return count($jsonTab) . ' entries loaded successfully. '. $this->linkTypes();
+        return count($jsonTab) . ' entries loaded successfully. ' . $error;
         //return $this->redirect(['index']);
     }
     /**
