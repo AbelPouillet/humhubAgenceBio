@@ -88,10 +88,12 @@ class EntiteController extends Controller
     public function actionCreate()
     {
         $model = new Entite();
-        $model->dateMaj = date("Y-m-d");
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load($this->request->post())) {
+                $model->dateMaj = date("Y-m-d");
+                if ($model->save()) {
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -112,9 +114,11 @@ class EntiteController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $model->dateMaj = date("Y-m-d");
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $model->dateMaj = date("Y-m-d");
+            if ($model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
         }
 
         return $this->render('update', [
