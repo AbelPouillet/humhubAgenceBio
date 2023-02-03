@@ -141,18 +141,21 @@ class EntiteController extends Controller
     }
     public function clearTypeEntite($idEntite)
     {
-        foreach (Joinentitetype::find()->where(['cet_entite_id' => $idEntite]) as $link) {
-            $link->delete();
+        foreach (Joinentitetype::find()->where(['cet_entite_id' => $idEntite])->all() as $link) {
+            if ($link) {
+                $link->delete();
+            }
         }
     }
     public function actionLoad()
     {
         // Changer les limites d'espace et de temps allouer pour la fonction
         ini_set('memory_limit', '-1');
-        ini_set('max_execution_time', '600');
-        $error = "";
+        ini_set('max_execution_time', '1800');
         //récupération des données agence bio
-        $jsonTab = $this->curlPage(0, 0, []);
+        $response = $this->curlPage(0, 0, [], false, "");
+        $jsonTab = $response['result'];
+        $error = $response['error'];
         if (isset($jsonTab)) {
             //parcour des entites agenceBio
             foreach ($jsonTab as $item) {
@@ -328,7 +331,7 @@ class EntiteController extends Controller
                                 $link->cet_entite_id = intVal($item['id'], 10);
 
                                 foreach ($type->cetCodeNafTypes as $codeNaf) {
-                                    if (str_starts_with($production->code, $codeNaf->codeNaf)) {
+                                    if (str_starts_with($production['code'], $codeNaf->codeNaf)) {
                                         $link->cet_type_id = $type->id;
                                         $codeHandled = true;
                                     }
@@ -338,7 +341,7 @@ class EntiteController extends Controller
                                 }
                             }
                             if (!$codeHandled) {
-                                $error .= " Pas de type pour le code " . $production->code . " \n";
+                                $error .= " Pas de type pour le code " . $production['code'] . " \n";
                             }
                         }
                     }
@@ -487,33 +490,48 @@ class EntiteController extends Controller
         }
         return $code;
     }
-    protected function curlPage($page, $distanceScan, $resultTab)
+    protected function curlPage($page, $distanceScan, $resultTab, $depasse40, $error)
     {
-        $curl = curl_init("https://opendata.agencebio.org/api/gouv/operateurs/?lng=-0.2443409&lat=44.914585&trierPar=coords&nb=420&debut=" . $page * 420);
+        $curl = curl_init("https://opendata.agencebio.org/api/gouv/operateurs/?lng=-0.03333&lat=44.849998&trierPar=coords&nb=420&debut=" . $page * 420);
         curl_setopt($curl, CURLOPT_HEADER, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         $result = json_decode(curl_exec($curl), true);
         foreach ($result['items'] as $item) {
-            $distanceMin = 40;
+            $distanceMin = 50;
+            //Test sur le nom les saveurs du bois du roc
+            if ($item['denominationcourante'] == "LES SAVEURS DU BOIS DU ROC" || $item['siret'] == 53016274200015) {
+                $error .= "Saveurs du bois du roc présent \n";
+            }
             foreach ($item['adressesOperateurs'] as $address) {
-                $distanceAdresse = $this->distance(44.914585, -0.2443409, $address['lat'], $address['long']);
+                $distanceAdresse = $this->distance(44.849998, -0.03333, $address['lat'], $address['long']);
+                $error .= "Distance adresse de " . $item['denominationcourante'] . " est de " . $distanceAdresse . " coordonnées =>\n lat: " . $address['lat'] . " long: " . $address['long'] . "\n";
+
                 if ($distanceMin > $distanceAdresse) {
                     $distanceMin = $distanceAdresse;
                 }
             }
             $distanceScan = $distanceMin;
-            if ($distanceScan < 40) {
+            if ($distanceScan < 50) {
+                if ($depasse40) {
+                    $error .= $item['denominationcourante'] . " Mal trié et ajouté \n";
+                }
                 $resultTab[] = $item;
             } else {
-                return $resultTab;
+                $error .= $item['denominationcourante'] . " au delà de 50 km sur toute ses addresses \n";
+                $depasse40 = true;
+                //return $resultTab;
             }
+            $error .= "Distance parcouru : " . $distanceScan . " Pour l'entite " . $item['denominationcourante'];
         }
-        if ($distanceScan < 40) {
-            return $this->curlPage($page + 1, $distanceScan, $resultTab);
+        if ($page < 51) {
+            return $this->curlPage($page + 1, $distanceScan, $resultTab, $depasse40, $error);
+        }
+        if (count($result) < 420) {
+            return ["result" => $resultTab, "error" => $error];
         }
     }
 
-    protected function distance($lat1, $lng1, $lat2, $lng2)
+    /*protected function distance($lat1, $lng1, $lat2, $lng2)
     {
         $pi80 = M_PI / 180;
         $lat1 *= $pi80;
@@ -532,4 +550,30 @@ class EntiteController extends Controller
 
         return  $km;
     }
+    protected function distance($lat1, $lon1, $lat2, $lon2) {
+        $earth_radius = 6371;
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+        $a = sin($dLat/2) * sin($dLat/2) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLon/2) * sin($dLon/2);
+        $c = 2 * asin(sqrt($a));
+        $d = $earth_radius * $c;
+        return $d;
+      } Meme résultat que la première*/
+    protected function distance($lat1, $lon1, $lat2, $lon2)
+    {
+        return acos(sin(deg2rad($lat1)) * sin(deg2rad($lat2)) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($lon1 - $lon2))) * 6371;
+    }
+    /**
+     * Distance adresse de LES SAVEURS DU BOIS DU ROCest de 46.54486494089
+     * Distance adresse de LES SAVEURS DU BOIS DU ROCest de 47.686490467505 Pareil pour les trois fonctions distance
+     */
+    /*function distanceRad($lat1, $lon1, $lat2, $lon2) {
+        $earth_radius = 6371;
+        $dLat = $lat2 - $lat1;
+        $dLon = $lon2 - $lon1;
+        $a = sin($dLat/2) * sin($dLat/2) + cos($lat1) * cos($lat2) * sin($dLon/2) * sin($dLon/2);
+        $c = 2 * asin(sqrt($a));
+        $d = $earth_radius * $c;
+        return $d;
+      } Résultat incohérent les coordonnés ne sont pas en radiant*/
 }
