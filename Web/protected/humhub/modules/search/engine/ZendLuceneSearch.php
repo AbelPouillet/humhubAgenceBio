@@ -96,7 +96,7 @@ class ZendLuceneSearch extends Search
             //On ajoute la priorisation du champ productions
             $field = Field::Text($key, $val, 'UTF-8');
             if ($key == 'productions' || $key == 'denominationcourante') {
-                $field->boost = 1000.0;
+                $field->boost = 5.0;
                 print 'boost production';
                 $doc->addField($field);
             } else {
@@ -177,17 +177,32 @@ class ZendLuceneSearch extends Search
         $index = $this->getIndex();
         $keyword = str_replace(['*', '?', '_', '$', '-', '.', '\'', '+', '&&', '||', '!', '(', ')', '{', '}', '[', ']', '^', '"', '~', ':', '\\'], ' ', mb_strtolower($keyword, 'utf-8'));
         //print('find launched');
+        //TODO CPT BuildQUERY
+        $start = microtime(true);
         $query = $this->buildQuery($keyword, $options);
+        $end = microtime(true);
+        $elapsed_time = $end - $start;
+        $tabtime = ["buildQueryTime" => $elapsed_time];
         if ($query === null) {
             return new SearchResultSet();
         }
 
         if (!isset($options['sortField']) || $options['sortField'] == '') {
+            //TODO CPT FIND
+            $start = microtime(true);
             $hits = new \ArrayObject($index->find($query, 'timestamp', SORT_NUMERIC, SORT_ASC));
+            $end = microtime(true);
+            $elapsed_time = $end - $start;
+            $tabtime[]= ["FindTime" => $elapsed_time];
         } else {
+            $start = microtime(true);
             $hits = new \ArrayObject($index->find($query));
+            $end = microtime(true);
+            $elapsed_time = $end - $start;
+            $tabtime[]= ["FindTime" => $elapsed_time];
         }
-
+        // TODO CPT pagination
+        $start = microtime(true);
         $resultSet = new SearchResultSet();
         $resultSet->total = count($hits);
         $resultSet->pageSize = $options['pageSize'];
@@ -204,7 +219,10 @@ class ZendLuceneSearch extends Search
 
             $resultSet->results[] = $result;
         }
-        //print var_dump($resultSet);
+        $end = microtime(true);
+        $elapsed_time = $end - $start;
+        $tabtime[]= ["paginationTime" => $elapsed_time];
+        //print var_dump($tabtime);
         return $resultSet;
     }
 
@@ -386,7 +404,7 @@ class ZendLuceneSearch extends Search
         if (count($options['limitCommunes']) > 0) {
             $strQuery = "";
             foreach ($options['limitCommunes'] as $commune) {
-                $strQuery .= '(distanceCommune:*_' . $commune->id . $options['distanceRecherche'] . '_*)';
+                $strQuery .= '(distanceCommune'.$options['distanceRecherche'].':*_' . $commune->id . '_*)';
             }
             $queryParserStr = new QueryParser();
             $queryParserStr->setDefaultOperator(QueryParser::B_OR);

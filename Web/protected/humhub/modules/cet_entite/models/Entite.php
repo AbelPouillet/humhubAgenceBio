@@ -275,7 +275,8 @@ class Entite extends \yii\db\ActiveRecord implements Searchable
             'categories' => $this->getCategoriesStr(),
             'activites' => $this->getActivitesStr(),
             'productions' => $this->getProductionsStr(),
-            'produits' => $this->getProduitsStr().$this->getCodenafStr(),
+            'produits' => $this->getProduitsStr(),
+            'naf' => $this->getCodenafStr()
         ];
 
         return $attributes;

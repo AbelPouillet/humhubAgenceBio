@@ -127,34 +127,39 @@ abstract class Search extends Component
             $meta['containerPk'] = $obj->id;
         }
         //Tableau de trie par date
-        if($obj instanceof CalendarEntry){
+        if ($obj instanceof CalendarEntry) {
             $meta['timestamp'] = strtotime($obj['start_datetime']);
         }
         // reconstruction l'index suite aux modifications du tableau meta
         if ($obj instanceof Entite) {
             //isCertifier
             $isCertifier = false;
-            foreach($obj->certificats as $certificat){
-                if($certificat->etatCertification == "ENGAGEE"){
+            foreach ($obj->certificats as $certificat) {
+                if ($certificat->etatCertification == "ENGAGEE") {
                     $isCertifier = true;
                 }
             }
             $meta['isCertifier'] = $isCertifier ? "true" : "false";
             //_idCommuneDistanceKM_
-            $meta['distanceCommune'] = "_";
+            //$meta['distanceCommune'] = "_";
+            $meta['distanceCommune40'] = "_";
+            $meta['distanceCommune30'] = "_";
+            $meta['distanceCommune20'] = "_";
+            $meta['distanceCommune10'] = "_";
+
             foreach (CetCommune::find()->all() as $commune) {
                 //Calcul de la distance $distanceKM
-                foreach($obj->adresses as $adresse){
+                foreach ($obj->adresses as $adresse) {
                     $distanceKM = $this->distance($adresse->lat, $adresse->long, $commune->Latitude, $commune->Longitude);
-                    print 'distance entre '.$obj->raisonSociale.' et '.$commune->commune.' est calculer à '.$distanceKM." KM \n";
+                    print 'distance entre ' . $obj->raisonSociale . ' et ' . $commune->commune . ' est calculer à ' . $distanceKM . " KM \n";
                     if ($distanceKM <= 40) {
-                        $meta['distanceCommune'] .= $commune->id . '40_';
+                        $meta['distanceCommune40'] .= $commune->id.'_';
                         if ($distanceKM <= 30) {
-                            $meta['distanceCommune'] .= $commune->id . '30_';
+                            $meta['distanceCommune30'] .= $commune->id.'_';
                             if ($distanceKM <= 20) {
-                                $meta['distanceCommune'] .= $commune->id . '20_';
+                                $meta['distanceCommune20'] .= $commune->id.'_';
                                 if ($distanceKM <= 10) {
-                                    $meta['distanceCommune'] .= $commune->id . '10_';
+                                    $meta['distanceCommune10'] .= $commune->id.'_';
                                 }
                             }
                         }
@@ -207,13 +212,13 @@ abstract class Search extends Component
             return self::DOCUMENT_TYPE_SPACE;
         } elseif ($obj instanceof User) {
             return self::DOCUMENT_TYPE_USER;
-        }elseif($obj instanceof CalendarEntry){
+        } elseif ($obj instanceof CalendarEntry) {
             return self::DOCUMENT_TYPE_EVENT;
         } elseif ($obj instanceof Entite) {
             return self::DOCUMENT_TYPE_CET_ENTITE;
-        }elseif ($obj instanceof ContentActiveRecord) {
+        } elseif ($obj instanceof ContentActiveRecord) {
             return self::DOCUMENT_TYPE_CONTENT;
-        }  else {
+        } else {
             return self::DOCUMENT_TYPE_OTHER;
         }
     }
