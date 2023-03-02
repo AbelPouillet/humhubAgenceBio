@@ -12,6 +12,7 @@ use Yii;
  *
  * @property Entite $entite
  * @property Production $production
+ * @property string $provenance
  */
 class Joinproductionentite extends \yii\db\ActiveRecord
 {

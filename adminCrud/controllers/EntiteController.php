@@ -294,6 +294,11 @@ class EntiteController extends Controller
                             }
                         }
                     }
+                    //Nettoyage des productions AgenceBio
+                    $ancienneProductions = Joinproductionentite::find(['cet_entite_id' => intVal($item['id'], 10), 'provenance' => 'AgenceBio']);
+                    foreach($ancienneProductions as $ancienneProduction){
+                        $ancienneProduction->delete();
+                    }
                     //Créations ou maj des productions
                     if (isset($item['productions'])) {
                         foreach ($item['productions'] as $production) {
@@ -322,6 +327,7 @@ class EntiteController extends Controller
                                 ? Joinproductionentite::findOne(['cet_production_id' => intVal($production['id'], 10), 'cet_entite_id' => intVal($item['id'], 10)]) : new Joinproductionentite();
                             $modelJoinProductionEntite->cet_production_id = intVal($production['id'], 10);
                             $modelJoinProductionEntite->cet_entite_id = intVal($item['id'], 10);
+                            $modelJoinProductionEntite->provenance = 'AgenceBio';
                             $modelJoinProductionEntite->save();
                             //TODO: ajout du type en fonction de la production
                             $codeHandled = false;
