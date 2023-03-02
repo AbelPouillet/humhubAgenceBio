@@ -31,6 +31,7 @@ use humhub\modules\space\models\Space;
 use humhub\widgets\Label;
 use humhub\modules\content\components\ContentContainerActiveRecord;
 use humhub\modules\user\models\User;
+use humhub\modules\calendar\widgets\WallNewsletter;
 
 /**
  * This is the model class for table "calendar_entry".
@@ -211,6 +212,11 @@ class CalendarEntry extends ContentActiveRecord implements Searchable, Recurrent
         }
 
         return parent::getLabels($labels);
+    }
+
+    function getWallNewsletter()
+    {
+        return WallNewsletter::widget(['calendar_entry' => $this]);
     }
 
     /**
@@ -676,7 +682,7 @@ class CalendarEntry extends ContentActiveRecord implements Searchable, Recurrent
         if(empty($this->getCalendarViewUrl())) {
             return static::VIEW_MODE_REDIRECT;
         }
-        
+
         return static::VIEW_MODE_MODAL;
     }
 

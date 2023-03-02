@@ -6,6 +6,7 @@ use humhub\modules\cet_activite\models\Activite;
 use humhub\modules\cet_adresse\models\Adresse;
 use humhub\modules\cet_categorie\models\Categorie;
 use humhub\modules\cet_certificat\models\Certificat;
+use humhub\modules\cet_entite\widgets\Tableau;
 use humhub\modules\cet_infos_supplementaires\models\Infossupplementaires;
 use humhub\modules\cet_join_activite_entite\models\Joinactiviteentite;
 use humhub\modules\cet_join_adresse_entite\models\Joinadresseentite;
@@ -264,7 +265,47 @@ class Entite extends \yii\db\ActiveRecord implements Searchable
     {
         return Wall::widget(['cet_entite' => $this]);
     }
+    function getEntiteEnTableau()
+    {
+        return Tableau::widget(['cet_entite' => $this]);
+    }
 
+    function getFormatedAdresse() {
+        $formatedAdresse = "";
+        foreach ($this->adresses as $adresse){
+            $formatedAdresse .= $adresse->lieu ." ". $adresse->codeCommune ." ". $adresse->ville ." ";
+
+        }
+        return $formatedAdresse;
+    }
+    function getFormatedAdresse1(){
+        $formatedAdresse = "";
+        if(isset($this->adresses[0])){
+            $formatedAdresse .= $this->adresses[0]->lieu ." ". $this->adresses[0]->codeCommune ." ". $this->adresses[0]->ville ." ";
+        }
+        return $formatedAdresse;
+    }
+    function getFormatedAdresse2(){
+        $formatedAdresse = "";
+        if(isset($this->adresses[1])){
+            $formatedAdresse .= $this->adresses[1]->lieu ." ". $this->adresses[1]->codeCommune ." ". $this->adresses[1]->ville ." ";
+        }
+        return $formatedAdresse;
+    }
+    function getFormatedAdresse3(){
+        $formatedAdresse = "";
+        if(isset($this->adresses[2])){
+            $formatedAdresse .= $this->adresses[2]->lieu ." ". $this->adresses[2]->codeCommune ." ". $this->adresses[2]->ville ." ";
+        }
+        return $formatedAdresse;
+    }
+    function getFormatedTypes() {
+        $formatedTypes = "";
+        foreach ($this->cetTypes as $type){
+            $formatedTypes .= $type->nom . " ";
+        }
+        return $formatedTypes;
+    }
     /**
      * @return mixed
      */

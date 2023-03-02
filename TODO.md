@@ -12,21 +12,47 @@ Ajouter la date de la mis à jour des entite DONE
 
 ## fonctionnalités manquantes
 # Newsletter 
-création de la newsletter à partir des évènements
+création de la newsletter à partir des évènements DONE
+STYLE de la newsletter
+  
 
 ## Moulinnette trie locale provenance des produits
 
 ## Moulinette de test de doublon
+  Ajouter le champ provenance dans la table cet_production_has_cet_entite et nettoyer en fonction les production à la MAJ AgenceBio .
+  liste des produit non trouver:
+  autre,Coings,purins de plante (consoude, prêle, ortie),batavia,butternut,courgette,potiron,agneau,mouton,batvia,bette à carde,radis noir,roquette,topinambour,kiwano,cassis,mûres,frisée,potimarron,citrouille,frisée,roquette,scarole,mellifères,vivaces
 
+
+  supprimer les lettre précédent les code naf dans cet_naf_produit
 tester TOUT les champs pouvant identifier un doublons
 
 tester les conflits entre les entite cet et agencebio
 
 ## Moulinnette import producteur Cetcal
-
+Tester les doublon et les non certifier
 Vérifier par le siret si le producteur est éxistant {
     compléter l'entite Agence bio avec les données cetcal
 }
+## DOCUMENTATION
+# compléter la doc 
+
+## Accueuil agenda
+
+## Sauvegarder les modification impacter par les MAJ humhub
+
+
+## Recherche HumHub
+
+retirer le picker Catégorie DONE
+
+renommer cetEntité en Annuaire avec carte Done
+
+ajouter Annuaire tableau Done
+
+Retirer le titre Résultat sur la map DONE
+
+Mettre en prod une fois finit 
 
 Mapping Produit => Production pour attribuer les code naf (Utiliser la table cet_naf_produit)
 
