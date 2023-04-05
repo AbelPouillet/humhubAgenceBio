@@ -15,9 +15,15 @@ class Events
     public static function onTopMenuInit($event)
     {
         $event->sender->addItem([
-            'label' => 'CetCal',
+            'label' => 'Annuaire',
             'icon' => '<i class="fa fa-map-marker"></i>',
-            'url' => Url::to(['/cetcalModule/index']),
+            'url' => Url::to([
+                '/search/search/index',
+                'SearchForm[scope]' => 'cet_entite',
+                'SearchForm[limitCommunesIds]' => [32759],
+                'SearchForm[distanceRecherche]' => 10,
+                'SearchForm[avancee]'=>true,
+            ]),
             'sortOrder' => 99999,
             'isActive' => (Yii::$app->controller->module && Yii::$app->controller->module->id == 'cetcalModule'),
         ]);
@@ -31,7 +37,7 @@ class Events
     public static function onAdminMenuInit($event)
     {
         $event->sender->addItem([
-            'label' => 'CetCal',
+            'label' => 'Annuaire',
             'url' => Url::to(['/cetcalModule/admin']),
             'group' => 'manage',
             'icon' => '<i class="fa fa-map-marker"></i>',

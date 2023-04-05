@@ -28,7 +28,6 @@ humhub\modules\stream\assets\StreamAsset::register($this);
 /* @var $results array */
 /* @var $model SearchForm */
 /* @var $pagination Pagination */
-
 ?>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <script <?= Html::nonce() ?>>
@@ -85,24 +84,9 @@ humhub\modules\stream\assets\StreamAsset::register($this);
             $('#search-settings-link i').removeClass('fa-caret-down');
             $('#search-settings-link i').addClass('fa-caret-right');
         });
-        //cache misére sur les clefs select2
-        /*$('.field-searchform-limitactivitesids').on('click', function() {
-            $('.select2-results__group').css('display', 'none');
-        });
-        $('.field-searchform-limitcategoriesids').on('click', function() {
-            $('.select2-results__group').css('display', 'none');
-        });
-        $('.field-searchform-limittypesids').on('click', function() {
-            $('.select2-results__group').css('display', 'none');
-        });
-        $('input[name="SearchForm[limitActivitesIds]"]').on('keydown', function() {
-            alert('Search')
-            $('.select2-results__group').css('display', 'none');
-        })
-        $('input').on( 'keydown', function() {
-            alert('Search')
-            $('.select2-results__group').css('display', 'none');
-        })*/
+        <?php if ($model->avancee) : ?>
+            $('#search-settings-link').click();
+        <?php endif; ?>
         $('#commune_filter').on("change", function() {
             setTimeout(
                 function() {
@@ -147,7 +131,8 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                         <div class="col-md-6">
                             <?php $form = ActiveForm::begin(['action' => Url::to([
                                 'index',
-                                'SearchForm[scope]' => $model->scope
+                                'SearchForm[scope]' => $model->scope,
+                                'SearchForm[result]' => []
                             ]), 'method' => 'GET']); ?>
                             <div class="form-group form-group-search">
                                 <?= $form->field($model, 'keyword')->textInput([
@@ -257,7 +242,8 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                                                     'SearchForm[isCertifier]' => $model->isCertifier,
                                                     'SearchForm[startDatetime]' => $model->startDatetime,
                                                     'SearchForm[endDatetime]' => $model->endDatetime,
-                                                    'SearchForm[limitTypesIds]' => $model->limitTypesIds
+                                                    'SearchForm[limitTypesIds]' => $model->limitTypesIds,
+                                                    'SearchForm[result]' => $results
                                                 ]); ?>
                         ' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_ALL) ? ' active' : '' ?>">
                         <div>
@@ -279,7 +265,8 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                                                     'SearchForm[isCertifier]' => $model->isCertifier,
                                                     'SearchForm[startDatetime]' => $model->startDatetime,
                                                     'SearchForm[endDatetime]' => $model->endDatetime,
-                                                    'SearchForm[limitTypesIds]' => $model->limitTypesIds
+                                                    'SearchForm[limitTypesIds]' => $model->limitTypesIds,
+                                                    'SearchForm[result]' => $results
                                                 ]); ?>
                                      ' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_CONTENT) ? ' active' : '' ?>">
                         <div>
@@ -300,7 +287,8 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                                                     'SearchForm[isCertifier]' => $model->isCertifier,
                                                     'SearchForm[startDatetime]' => $model->startDatetime,
                                                     'SearchForm[endDatetime]' => $model->endDatetime,
-                                                    'SearchForm[limitTypesIds]' => $model->limitTypesIds
+                                                    'SearchForm[limitTypesIds]' => $model->limitTypesIds,
+                                                    'SearchForm[result]' => $results
                                                 ]); ?>
                                      ' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_USER) ? ' active' : '' ?>">
                         <div>
@@ -321,7 +309,8 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                                                     'SearchForm[isCertifier]' => $model->isCertifier,
                                                     'SearchForm[startDatetime]' => $model->startDatetime,
                                                     'SearchForm[endDatetime]' => $model->endDatetime,
-                                                    'SearchForm[limitTypesIds]' => $model->limitTypesIds
+                                                    'SearchForm[limitTypesIds]' => $model->limitTypesIds,
+                                                    'SearchForm[result]' => $results
                                                 ]); ?>
                                      ' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_SPACE) ? ' active' : '' ?>">
                         <div>
@@ -342,7 +331,8 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                                                     'SearchForm[isCertifier]' => $model->isCertifier,
                                                     'SearchForm[startDatetime]' => $model->startDatetime,
                                                     'SearchForm[endDatetime]' => $model->endDatetime,
-                                                    'SearchForm[limitTypesIds]' => $model->limitTypesIds
+                                                    'SearchForm[limitTypesIds]' => $model->limitTypesIds,
+                                                    'SearchForm[result]' => $results
                                                 ]); ?>
                                                     ' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_EVENT) ? ' active' : '' ?>">
                         <div>
@@ -365,7 +355,8 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                                                     'SearchForm[isCertifier]' => $model->isCertifier,
                                                     'SearchForm[startDatetime]' => $model->startDatetime,
                                                     'SearchForm[endDatetime]' => $model->endDatetime,
-                                                    'SearchForm[limitTypesIds]' => $model->limitTypesIds
+                                                    'SearchForm[limitTypesIds]' => $model->limitTypesIds,
+                                                    'SearchForm[result]' => $results
                                                 ]); ?>
                                  ' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_CET_ENTITE) ? ' active' : '' ?>">
                         <div>
@@ -376,22 +367,22 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                     </a>
                 </div>
                 <div class="list-group">
-                <a data-pjax-prevent href='<?= Url::to([
-                                                '/search/search/tableauentite',
-                                                'SearchForm[keyword]' => $model->keyword,
-                                                'SearchForm[limitSpaceGuids]' => $model->limitSpaceGuids,
-                                                'SearchForm[scope]' => SearchForm::SCOPE_CET_ENTITE,
-                                                'SearchForm[limitActivitesIds]' => $model->limitActivitesIds,
-                                                'SearchForm[limitCategoriesIds]' => $model->limitCategoriesIds,
-                                                'SearchForm[limitCommunesIds]' => $model->limitCommunesIds,
-                                                'SearchForm[distanceRecherche]' => $model->distanceRecherche,
-                                                'SearchForm[isCertifier]' => $model->isCertifier,
-                                                'SearchForm[limitTypesIds]' => $model->limitTypesIds
+                    <a data-pjax-prevent href='<?= Url::to([
+                                                    '/search/search/tableauentite',
+                                                    'SearchForm[keyword]' => $model->keyword,
+                                                    'SearchForm[limitSpaceGuids]' => $model->limitSpaceGuids,
+                                                    'SearchForm[scope]' => SearchForm::SCOPE_CET_ENTITE,
+                                                    'SearchForm[limitActivitesIds]' => $model->limitActivitesIds,
+                                                    'SearchForm[limitCategoriesIds]' => $model->limitCategoriesIds,
+                                                    'SearchForm[limitCommunesIds]' => $model->limitCommunesIds,
+                                                    'SearchForm[distanceRecherche]' => $model->distanceRecherche,
+                                                    'SearchForm[isCertifier]' => $model->isCertifier,
+                                                    'SearchForm[limitTypesIds]' => $model->limitTypesIds,
+                                                    'SearchForm[result]' => $results
                                                 ]); ?>
-                                 ' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_CET_ENTITE) ? ' active' : '' ?>">
+                                 ' class="list-group-item">
                         <div>
                             <div class="edit_group "> Annuaire en tableau
-                                <?= ($model->scope === SearchForm::SCOPE_CET_ENTITE) ? '(' . $total . ')' : '' ?>
                             </div>
                         </div>
                     </a>
@@ -450,7 +441,8 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                         'SearchForm[isCertifier]' => $model->isCertifier,
                         'SearchForm[startDatetime]' => $model->startDatetime,
                         'SearchForm[endDatetime]' => $model->endDatetime,
-                        'SearchForm[limitTypesIds]' => $model->limitTypesIds
+                        'SearchForm[limitTypesIds]' => $model->limitTypesIds,
+                        'SearchForm[result]' => [],
                     ]), 'method' => 'GET']); ?>
                     <label class="control-label">Rechercher un évènement depuis le </label>
                     <?= $filter->field($model, 'startDatetime')->widget(DatePicker::classname(), [

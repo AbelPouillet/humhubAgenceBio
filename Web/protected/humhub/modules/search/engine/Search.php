@@ -115,6 +115,35 @@ abstract class Search extends Component
     {
     }
 
+    public function coordToString($coord)
+    {
+        print("on passe ici \n");
+        $coordPositive = floatval($coord) + 200;
+        $coordstr = strval($coordPositive);
+        if (str_contains($coordstr, '.')) {
+            $coordArray = explode('.', $coordstr);
+            if (isset($coordArray[1])) {
+
+                if (strlen($coordArray[1]) > 7) {
+                    $coordArray[1] = substr($coordArray[1], 0, 7);
+                }
+                while (strlen($coordArray[1]) < 7) {
+                    $coordArray[1] .= '0';
+                }
+                $coordstr = $coordArray[0] . $coordArray[1];
+                while (strlen($coordstr) < 10) {
+                    $coordstr = '0' . $coordstr;
+                }
+            }
+        } else {
+            while (strlen($coordstr) < 10) {
+                $coordstr .= '0';
+            }
+        }
+        print($coordstr);
+        return $coordstr;
+    }
+
     protected function getMetaInfoArray(Searchable $obj)
     {
         $meta = [];
@@ -142,27 +171,56 @@ abstract class Search extends Component
             $meta['isCertifier'] = $isCertifier ? "true" : "false";
             //_idCommuneDistanceKM_
             //$meta['distanceCommune'] = "_";
+
             $meta['distanceCommune40'] = "_";
             $meta['distanceCommune30'] = "_";
             $meta['distanceCommune20'] = "_";
             $meta['distanceCommune10'] = "_";
+            /*$latmin = '3000000000';
+            $longmin = '3000000000';
+            $latmax = '0';
+            $longmax = '0';
+            foreach ($obj->adresses as $adresse) {
+                if (isset($adresse)) {
+                    $currentLat = $this->coordToString($adresse->lat);
+                    $currentLong = $this->coordToString($adresse->long);
+                    if (intval($currentLat) < intval($latmin)) {
+                        $latmin = $currentLat;
+                    }
+                    if (intval($currentLat) > intval($latmax)) {
+                        $latmax = $currentLat;
+                    }
+                    if (intval($currentLong) < intval($longmin)) {
+                        $longmin = $currentLong;
+                    }
+                    if (intval($currentLong) > intval($longmax)) {
+                        $longmax = $currentLong;
+                    }
+                }
+            }
+            $meta['latmin'] = $latmin;
+            $meta['longmin'] = $longmin;
+            $meta['latmax'] = $latmax;
+            $meta['longmax'] = $longmax;
+            */
 
             foreach (CetCommune::find()->all() as $commune) {
+                //TODO: Séparation en zone
                 //Calcul de la distance $distanceKM
                 foreach ($obj->adresses as $adresse) {
                     $distanceKM = $this->distance($adresse->lat, $adresse->long, $commune->Latitude, $commune->Longitude);
                     print 'distance entre ' . $obj->raisonSociale . ' et ' . $commune->commune . ' est calculer à ' . $distanceKM . " KM \n";
-                    if ($distanceKM <= 40) {
-                        $meta['distanceCommune40'] .= $commune->id.'_';
-                        if ($distanceKM <= 30) {
-                            $meta['distanceCommune30'] .= $commune->id.'_';
-                            if ($distanceKM <= 20) {
-                                $meta['distanceCommune20'] .= $commune->id.'_';
-                                if ($distanceKM <= 10) {
-                                    $meta['distanceCommune10'] .= $commune->id.'_';
-                                }
-                            }
-                        }
+                    if ($distanceKM <= 40 && $distanceKM > 30) {
+                        $meta['distanceCommune40'] .= $commune->id . '_';
+                    }
+                    if ($distanceKM <= 30 && $distanceKM > 20) {
+                        $meta['distanceCommune30'] .= $commune->id . '_';
+                    }
+                    if ($distanceKM <= 20 && $distanceKM > 10) {
+                        $meta['distanceCommune20'] .= $commune->id . '_';
+                    }
+                    if ($distanceKM <= 10) {
+                        $meta['distanceCommune10'] .= $commune->id . '_';
                     }
                 }
             }

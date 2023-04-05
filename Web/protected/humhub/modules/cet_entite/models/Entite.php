@@ -312,7 +312,7 @@ class Entite extends \yii\db\ActiveRecord implements Searchable
     function getSearchAttributes()
     {
         $attributes = [
-            'denominationcourante' => $this->denominationcourante,
+            'denominationcourante' => $this->getDenominationCourante(),
             'categories' => $this->getCategoriesStr(),
             'activites' => $this->getActivitesStr(),
             'productions' => $this->getProductionsStr(),
@@ -321,6 +321,15 @@ class Entite extends \yii\db\ActiveRecord implements Searchable
         ];
 
         return $attributes;
+    }
+    public function getDenominationCourante(){
+        $denominationcourante = $this->denominationcourante;
+        foreach ($this->infossupplementaires as $infosupplementaire) {
+            if($infosupplementaire->nom == "admDenominationCourante"){
+                $denominationcourante .= ", ". $infosupplementaire->infossupplementairesValeurs[0];
+            }
+        }
+        return $denominationcourante;
     }
     public function getCodenafStr(){
         $codenafs = "";

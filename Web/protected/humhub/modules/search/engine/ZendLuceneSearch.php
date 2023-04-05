@@ -61,7 +61,7 @@ class ZendLuceneSearch extends Search
      *
      * @see Lucene::getTermsPerQueryLimit()
      */
-    public $searchItemLimit = 4096;
+    public $searchItemLimit = 0;
 
     /**
      * @inheritdoc
@@ -193,13 +193,13 @@ class ZendLuceneSearch extends Search
             $hits = new \ArrayObject($index->find($query, 'timestamp', SORT_NUMERIC, SORT_ASC));
             $end = microtime(true);
             $elapsed_time = $end - $start;
-            $tabtime[]= ["FindTime" => $elapsed_time];
+            $tabtime[] = ["FindTime" => $elapsed_time];
         } else {
             $start = microtime(true);
             $hits = new \ArrayObject($index->find($query));
             $end = microtime(true);
             $elapsed_time = $end - $start;
-            $tabtime[]= ["FindTime" => $elapsed_time];
+            $tabtime[] = ["FindTime" => $elapsed_time];
         }
         // TODO CPT pagination
         $start = microtime(true);
@@ -221,7 +221,7 @@ class ZendLuceneSearch extends Search
         }
         $end = microtime(true);
         $elapsed_time = $end - $start;
-        $tabtime[]= ["paginationTime" => $elapsed_time];
+        $tabtime[] = ["paginationTime" => $elapsed_time];
         //print var_dump($tabtime);
         return $resultSet;
     }
@@ -402,15 +402,70 @@ class ZendLuceneSearch extends Search
             $query->addSubquery($queryStr, true);
         }
         if (count($options['limitCommunes']) > 0) {
+            // recherche par zone
             $strQuery = "";
-            foreach ($options['limitCommunes'] as $commune) {
-                $strQuery .= '(distanceCommune'.$options['distanceRecherche'].':*_' . $commune->id . '_*)';
+            if ($options['distanceRecherche'] == 40) {
+                foreach ($options['limitCommunes'] as $commune) {
+                    $strQuery .= '(distanceCommune40:*_' . $commune->id . '_*)';
+                }
+            }
+            if ($options['distanceRecherche'] >= 30) {
+                foreach ($options['limitCommunes'] as $commune) {
+                    $strQuery .= '(distanceCommune30:*_' . $commune->id . '_*)';
+                }
+            }
+            if ($options['distanceRecherche'] >= 20) {
+                foreach ($options['limitCommunes'] as $commune) {
+                    $strQuery .= '(distanceCommune20:*_' . $commune->id . '_*)';
+                }
+            }
+            if ($options['distanceRecherche'] >= 10) {
+
+                foreach ($options['limitCommunes'] as $commune) {
+                    $strQuery .= '(distanceCommune10:*_' . $commune->id . '_*)';
+                }
             }
             $queryParserStr = new QueryParser();
             $queryParserStr->setDefaultOperator(QueryParser::B_OR);
             $queryStr = $queryParserStr->parse($strQuery);
             //print $strQuery . "\n";
             $query->addSubquery($queryStr, true);
+            //TODO: Recherche par coordonnées
+            /*$km1enlat = 0.009;
+            $km1enlong = 0.008;
+            $strQuery = "";
+            foreach ($options['limitCommunes'] as $commune) {
+                //si latmaxProducteur < latminCommune on ejecte
+                //si latminProducteur > latmaxCommune on ejecte
+                //la même sur longitude
+                //
+                $strQuery= '(latmin:[ 0 TO '.$this->coordToString(floatval($commune->Latitude) + (floatval($options['distanceRecherche']) * $km1enlat)).' ] AND '.
+                            ' latmax:[ '.$this->coordToString(floatval($commune->Latitude) - (floatval($options['distanceRecherche']) * $km1enlat)).' TO 3000000000 ]) AND '.
+                            ' (longmin:[ 0 TO '.$this->coordToString(floatval($commune->Longitude) + (floatval($options['distanceRecherche']) * $km1enlong)).' ] AND '.
+                            ' longmax:[ '.$this->coordToString(floatval($commune->Longitude) - (floatval($options['distanceRecherche']) * $km1enlong)).' TO 3000000000])';
+                $queryParserStr = new QueryParser();
+                $queryParserStr->setDefaultOperator(QueryParser::B_OR);
+                $queryStr = $queryParserStr->parse($strQuery);
+                //print($queryStr);
+                $query->addSubquery($queryStr, true);
+            }*/
+            /*
+            $km1enlat = 0.009;
+            $km1enlong = 0.008;
+            $strQuery = "";
+            foreach ($options['limitCommunes'] as $commune) {
+                for ($i = 0; $i < 1; $i++) {
+                    $strQuery .= 'lat' . $i . ':[' . $this->coordToString(floatval($commune->Latitude) - (floatval($options['distanceRecherche']) * $km1enlat)) . ' TO ' .
+                        $this->coordToString(floatval($commune->Latitude) + (floatval($options['distanceRecherche']) * $km1enlat)) . '] AND (long' . $i . ':[ ' .
+                        $this->coordToString(floatval($commune->Longitude) - (floatval($options['distanceRecherche']) * $km1enlong)) . ' TO ' .
+                        $this->coordToString(floatval($commune->Longitude) + (floatval($options['distanceRecherche']) * $km1enlong)) . '])';
+                    $queryParserStr = new QueryParser();
+                    $queryParserStr->setDefaultOperator(QueryParser::B_OR);
+                    $queryStr = $queryParserStr->parse($strQuery);
+                    //print($queryStr);
+                    $query->addSubquery($queryStr, true);
+                }
+            }*/
         }
         //print $query->__toString();
         if ($options['isCertifier']) {
@@ -422,6 +477,35 @@ class ZendLuceneSearch extends Search
             $query->addSubquery($queryStr, true);
         }
         return $query;
+    }
+
+    public function coordToString($coord)
+    {
+        //print("on passe ici \n");
+        $coordPositive = floatval($coord) + 200;
+        $coordstr = strval($coordPositive);
+        if (str_contains($coordstr, '.')) {
+            $coordArray = explode('.', $coordstr);
+            if (isset($coordArray[1])) {
+
+                if (strlen($coordArray[1]) > 7) {
+                    $coordArray[1] = substr($coordArray[1], 0, 7);
+                }
+                while (strlen($coordArray[1]) < 7) {
+                    $coordArray[1] .= '0';
+                }
+                $coordstr = $coordArray[0] . $coordArray[1];
+                while (strlen($coordstr) < 10) {
+                    $coordstr = '0' . $coordstr;
+                }
+            }
+        } else {
+            while (strlen($coordstr) < 10) {
+                $coordstr .= '0';
+            }
+        }
+        //print($coordstr);
+        return $coordstr;
     }
 
     public function optimize()

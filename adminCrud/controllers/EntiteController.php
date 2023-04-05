@@ -156,6 +156,8 @@ class EntiteController extends Controller
         $response = $this->curlPage(0, 0, [], false, "");
         $jsonTab = $response['result'];
         $error = $response['error'];
+        $cptAdresseMAX = 0;
+        $adresseMalNettoyer = "";
         if (isset($jsonTab)) {
             //parcour des entites agenceBio
             foreach ($jsonTab as $item) {
@@ -256,48 +258,72 @@ class EntiteController extends Controller
                             $modelJoinSiteEntite->save();
                         }
                     }
+                    //Suppression des anciennes addresse AgenceBio
+                    $ancienneAdresses = Joinadresseentite::find()->where(['cet_entite_id' => intVal($item['id'], 10)])->all();
+                    $nbaddressemalNettoyer = 0;
+                    foreach ($ancienneAdresses as $ancienneAdresse) {
+                        if (isset($ancienneAdresse) && isset($ancienneAdresse->entite)) {
+                            $ancienneAdresse->delete();
+                        } else {
+                            $nbaddressemalNettoyer++;
+                            $adresseMalNettoyer .= $item['denominationcourante'] . " du aux type : " . gettype($ancienneAdresse) . "\n";
+                        }
+                    }
+
                     //Création ou MAJ des adresses
+                    if ($cptAdresseMAX < count($item['adressesOperateurs'])) {
+                        $cptAdresseMAX = count($item['adressesOperateurs']);
+                    }
                     if (isset($item['adressesOperateurs'])) {
                         foreach ($item['adressesOperateurs'] as $adresse) {
-
-                            $modelAdresse = Adresse::findOne(['id' => intVal($adresse['id'], 10)]) ?
-                                Adresse::findOne(['id' => intVal($adresse['id'], 10)]) : new Adresse();
-                            $modelAdresse->id = intVal($adresse['id'], 10);
-                            $modelAdresse->lieu = Encoding::fixUTF8($adresse['lieu'], Encoding::ICONV_TRANSLIT);
-                            $modelAdresse->codePostal = $adresse['codePostal'];
-                            $modelAdresse->ville = Encoding::fixUTF8($adresse['ville'], Encoding::ICONV_TRANSLIT);
-
-                            $modelAdresse->lat = floatval($adresse['lat']);
-                            $modelAdresse->long = floatval($adresse['long']);
-                            $modelAdresse->codeCommune = $adresse['codeCommune'];
-
-                            $modelAdresse->active = $adresse['active'] == "true" ? true : false;
-                            $modelAdresse->departementId = intVal($adresse['departementId'], 10);
-                            if ($adresse['typeAdresseOperateurs']) {
-                                foreach ($adresse['typeAdresseOperateurs'] as $typeAdresse) {
-                                    $modelTypeAdresse = Typeadresse::findOne(['nom' => $typeAdresse, 'pk_cet_adresse_operateur' => intVal($adresse['id'], 10)])
-                                        ? Typeadresse::findOne(['nom' => $typeAdresse, 'pk_cet_adresse_operateur' => intVal($adresse['id'], 10)]) : new Typeadresse();
-                                    $modelTypeAdresse->nom = $typeAdresse;
-                                    $modelTypeAdresse->pk_cet_adresse_operateur = intVal($adresse['id'], 10);
-                                    $modelTypeAdresse->save();
-                                }
-                            }
-
-                            if ($modelAdresse->save()) {
-                                $modelJoinAdresseEntite = Joinadresseentite::findOne(['cet_adresse_operateur_id' => intVal($adresse['id'], 10), 'cet_entite_id' => intVal($item['id'], 10)])
-                                    ? Joinadresseentite::findOne(['cet_adresse_operateur_id' => intVal($adresse['id'], 10), 'cet_entite_id' => intVal($item['id'], 10)]) : new Joinadresseentite;
-                                $modelJoinAdresseEntite->cet_adresse_operateur_id = intVal($adresse['id'], 10);
-                                $modelJoinAdresseEntite->cet_entite_id = intVal($item['id'], 10);
-                                $modelJoinAdresseEntite->save();
+                            if (floatval($adresse['lat']) == floatval($adresse['long']) && floatval($adresse['lat']) == 0) {
+                                $error .= "adresse incorrecte " . $item['denominationcourante'] . " \n";
                             } else {
-                                return 'adresse fail';
+                                $modelAdresse = Adresse::findOne(['id' => intVal($adresse['id'], 10)]) ?
+                                    Adresse::findOne(['id' => intVal($adresse['id'], 10)]) : new Adresse();
+                                $modelAdresse->id = intVal($adresse['id'], 10);
+                                $modelAdresse->lieu = Encoding::fixUTF8($adresse['lieu'], Encoding::ICONV_TRANSLIT);
+                                $modelAdresse->codePostal = $adresse['codePostal'];
+                                $modelAdresse->ville = Encoding::fixUTF8($adresse['ville'], Encoding::ICONV_TRANSLIT);
+
+                                $modelAdresse->lat = floatval($adresse['lat']);
+                                $modelAdresse->long = floatval($adresse['long']);
+                                $modelAdresse->codeCommune = $adresse['codeCommune'];
+
+                                $modelAdresse->active = $adresse['active'] == "true" ? true : false;
+                                $modelAdresse->departementId = intVal($adresse['departementId'], 10);
+                                if ($adresse['typeAdresseOperateurs']) {
+                                    foreach ($adresse['typeAdresseOperateurs'] as $typeAdresse) {
+                                        $modelTypeAdresse = Typeadresse::findOne(['nom' => $typeAdresse, 'pk_cet_adresse_operateur' => intVal($adresse['id'], 10)])
+                                            ? Typeadresse::findOne(['nom' => $typeAdresse, 'pk_cet_adresse_operateur' => intVal($adresse['id'], 10)]) : new Typeadresse();
+                                        $modelTypeAdresse->nom = $typeAdresse;
+                                        $modelTypeAdresse->pk_cet_adresse_operateur = intVal($adresse['id'], 10);
+                                        $modelTypeAdresse->save();
+                                    }
+                                }
+
+                                if ($modelAdresse->save()) {
+                                    $modelJoinAdresseEntite = Joinadresseentite::findOne(['cet_adresse_operateur_id' => intVal($adresse['id'], 10), 'cet_entite_id' => intVal($item['id'], 10)])
+                                        ? Joinadresseentite::findOne(['cet_adresse_operateur_id' => intVal($adresse['id'], 10), 'cet_entite_id' => intVal($item['id'], 10)]) : new Joinadresseentite;
+                                    $modelJoinAdresseEntite->cet_adresse_operateur_id = intVal($adresse['id'], 10);
+                                    $modelJoinAdresseEntite->cet_entite_id = intVal($item['id'], 10);
+                                    $modelJoinAdresseEntite->save();
+                                } else {
+                                    return 'adresse fail ' . $item['denominationcourante'];
+                                }
                             }
                         }
                     }
+                    $ancienneAdresses = Joinadresseentite::find(['cet_entite_id' => intVal($item['id'], 10)]);
+                    if (gettype($ancienneAdresse) == "array" && count($ancienneAdresse) > count($item['adressesOperateurs'])) {
+                        $error .= $item['denominationcourante'] . " a mal nettoyer ses adresses";
+                    }
                     //Nettoyage des productions AgenceBio
-                    $ancienneProductions = Joinproductionentite::find(['cet_entite_id' => intVal($item['id'], 10), 'provenance' => 'AgenceBio']);
-                    foreach($ancienneProductions as $ancienneProduction){
-                        $ancienneProduction->delete();
+                    $ancienneProductions = Joinproductionentite::find()->where(['cet_entite_id' => intVal($item['id'], 10), 'provenance' => 'AgenceBio'])->all();
+                    foreach ($ancienneProductions as $ancienneProduction) {
+                        if (isset($ancienneProduction) && isset($ancienneProduction->entite)) {
+                            $ancienneProduction->delete();
+                        }
                     }
                     //Créations ou maj des productions
                     if (isset($item['productions'])) {
@@ -390,7 +416,7 @@ class EntiteController extends Controller
             }
         }
 
-        return count($jsonTab) . ' entries loaded successfully. ' . $error;
+        return count($jsonTab) . ' entries loaded successfully. ' . $error . "\n" . 'Nombres maximum addresse ' . strval($cptAdresseMAX) . "\n" . $adresseMalNettoyer;
         //return $this->redirect(['index']);
     }
     /**

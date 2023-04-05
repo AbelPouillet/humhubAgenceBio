@@ -145,31 +145,10 @@ class SearchController extends Controller
             }
             $this->showResults = true;
         }
-        //Premiere recherche pour avoir le total des entites
-        $options = [
-            'model' => '',
-            'type' => $type,
-            'page' => $model->page,
-            'sortField' => '',
-            'pageSize' => Yii::$app->settings->get('paginationSize'),
-            'limitSpaces' => [],
-            'limitActivites' => $limitActivites,
-            'limitCommunes' => $limitCommunes,
-            'limitCategories' => $limitCategories,
-            'limitTypes' => $limitTypes,
-            'distanceRecherche' => $this->distanceRecherche,
-            'isCertifier' => $this->isCertifier,
-            'displayMap' => $displayMap,
-            'displayEvent' => false,
-        ];
-
-        $searchResultSet = Yii::$app->search->find($model->keyword, $options);
-        //Deuxième pour optenir tout les entites rechercher non paginer
-        $searchEventResultSet = $searchResultSet;
         $optionsMap = [
             'page' => 0,
             'sortField' => '',
-            'pageSize' => $searchEventResultSet->total,
+            'pageSize' => 40000,
             'limitSpaces' => [],
             'limitActivites' => $limitActivites,
             'limitCommunes' => $limitCommunes,
@@ -216,32 +195,10 @@ class SearchController extends Controller
             $displayEvent = true;
             $sortField = '';
         }
-        //Premiere recherche pour avoir le total des évènements
-        $options = [
-            'model' => '',
-            'type' => $type,
-            'page' => $model->page,
-            'sortField' => $sortField,
-            'pageSize' => Yii::$app->settings->get('paginationSize'),
-            'limitSpaces' => [],
-            'limitActivites' => [],
-            'limitCommunes' => [],
-            'limitCategories' => [],
-            'limitTypes' => [],
-            'distanceRecherche' => $this->distanceRecherche,
-            'isCertifier' => $this->isCertifier,
-            'startDatetime' => $this->startDatetime,
-            'displayEvent' => $displayEvent,
-            'endDatetime' => $this->endDatetime,
-        ];
-
-        $searchResultSet = Yii::$app->search->find($model->keyword, $options);
-        //Deuxième pour optenir tout les évènement rechercher non paginer
-        $searchEventResultSet = $searchResultSet;
         $optionsEvent = [
             'page' => 0,
             'sortField' => $sortField,
-            'pageSize' => $searchEventResultSet->total,
+            'pageSize' => 40000,
             'limitSpaces' => [],
             'limitActivites' => [],
             'limitCommunes' => [],
@@ -274,7 +231,9 @@ class SearchController extends Controller
         ini_set('max_execution_time', '300');
         $model = new SearchForm();
         $model->load(Yii::$app->request->get());
-
+        if (!isset($_SESSION['result'])) {
+            $_SESSION['result'] = [];
+        }
         $limitSpaces = [];
         if (!empty($model->limitSpaceGuids)) {
             foreach ($model->limitSpaceGuids as $guid) {
@@ -383,37 +342,39 @@ class SearchController extends Controller
         } */ else {
             $model->scope = SearchForm::SCOPE_ALL;
         }
-        //TODO : search result search load uniquement si !displaymap
-        $options = [
-            'model' => $modelClass,
-            'type' => $type,
-            'page' => $model->page,
-            'sortField' => $sortField,
-            'pageSize' => Yii::$app->settings->get('paginationSize'),
-            'limitSpaces' => $limitSpaces,
-            'limitActivites' => $limitActivites,
-            'limitCommunes' => $limitCommunes,
-            'limitCategories' => $limitCategories,
-            'limitTypes' => $limitTypes,
-            'distanceRecherche' => $this->distanceRecherche,
-            'isCertifier' => $this->isCertifier,
-            'startDatetime' => $this->startDatetime,
-            'displayEvent' => $displayEvent,
-            'endDatetime' => $this->endDatetime,
-        ];
+        if ($_SESSION['result'] == []) {
+            //TODO : search result search load uniquement si !displaymap
+            $options = [
+                'model' => $modelClass,
+                'type' => $type,
+                'page' => 0,
+                'sortField' => $sortField,
+                'pageSize' => 40000,
+                'limitSpaces' => $limitSpaces,
+                'limitActivites' => $limitActivites,
+                'limitCommunes' => $limitCommunes,
+                'limitCategories' => $limitCategories,
+                'limitTypes' => $limitTypes,
+                'distanceRecherche' => $this->distanceRecherche,
+                'isCertifier' => $this->isCertifier,
+                'startDatetime' => $this->startDatetime,
+                'displayEvent' => $displayEvent,
+                'endDatetime' => $this->endDatetime,
+            ];
 
-        $searchResultSet = Yii::$app->search->find($model->keyword, $options);
-        $total = $searchResultSet->total;
-        // Store static for use in widgets (e.g. fileList)
-        self::$keyword = $model->keyword;
+            $searchResultSet = Yii::$app->search->find($model->keyword, $options);
+            $total = $searchResultSet->total;
+            // Store static for use in widgets (e.g. fileList)
+            self::$keyword = $model->keyword;
 
-        $pagination = new Pagination;
-        $pagination->totalCount = $searchResultSet->total;
-        $pagination->pageSize = $searchResultSet->pageSize;
-
-        $resultMap = [];
-        if ($displayMap) {
-            $searchMapResultSet = $searchResultSet;
+            $pagination = new Pagination;
+            $pagination->totalCount = $searchResultSet->total;
+            $pagination->pageSize = Yii::$app->settings->get('paginationSize');
+            $resulTotal = $searchResultSet->getResultInstances();
+            $resultMap = [];
+            if ($displayMap) {
+                $resultMap = $resulTotal;
+                /*$searchMapResultSet = $searchResultSet;
             $optionsMap = [
                 'page' => 0,
                 'sortField' => 'productions',
@@ -431,11 +392,28 @@ class SearchController extends Controller
             ];
 
             $searchMapResultSet =  Yii::$app->search->find($model->keyword, $optionsMap);
-            $resultMap = $searchMapResultSet->getResultInstances();
+            $resultMap = $searchMapResultSet->getResultInstances();*/
+            }
+            $resulTotal = $searchResultSet->getResultInstances();
+            $_SESSION['result'] = $resulTotal;
+            //print(var_dump($model->result));
+        } else {
+            $resulTotal = $_SESSION['result'];
+            $pagination = new Pagination;
+            $pagination->totalCount = count($resulTotal);
+            $total = count($resulTotal);
+            $pagination->pageSize = Yii::$app->settings->get('paginationSize');
+            self::$keyword = $model->keyword;
+            $resultMap = [];
+            if ($displayMap) {
+                $resultMap = $resulTotal;
+            }
         }
+        $resultPaginate =  array_slice($resulTotal, ($model->page - 1) * Yii::$app->settings->get('paginationSize'), ($model->page) * Yii::$app->settings->get('paginationSize'));
+        //print(var_dump($model));
         return $this->render('index', [
             'model' => $model,
-            'results' => $searchResultSet->getResultInstances(),
+            'results' => $resultPaginate,
             'resultMap' => $resultMap,
             'pagination' => $pagination,
             'total' => $total,

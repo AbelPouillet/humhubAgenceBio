@@ -57,4 +57,10 @@ use yii\helpers\Html;
         }
         ?>
     </div>
+
+    <?php if (Yii::$app->user->isAdmin()) :?>
+        <div>
+            <h2>Formulaire d'Adminstration</h2>
+        </div>
+    <?php endif?>
 </div>
