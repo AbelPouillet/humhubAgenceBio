@@ -27,7 +27,7 @@ class SearchForm extends Model
     const SCOPE_EVENT = 'event';
     public $keyword = '';
     public $scope = '';
-    public $result = [];
+    public $isnewSearch = false;
     public $page = 1;
     public $limitSpaceGuids = [];
     public $limitActivitesIds = [];
@@ -57,7 +57,7 @@ class SearchForm extends Model
     public function rules()
     {
         return [
-            [['keyword' , 'scope', 'result', 'page', 'limitSpaceGuids', 'limitTypesIds' ,'limitActivitesIds', 'limitCategoriesIds', 'limitCommunesIds', 'distanceRecherche', 'isCertifier', 'startDatetime', 'endDatetime', 'avancee'], 'safe']
+            [['keyword' , 'scope', 'isnewSearch', 'page', 'limitSpaceGuids', 'limitTypesIds' ,'limitActivitesIds', 'limitCategoriesIds', 'limitCommunesIds', 'distanceRecherche', 'isCertifier', 'startDatetime', 'endDatetime', 'avancee'], 'safe']
         ];
     }
 

@@ -132,7 +132,7 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                             <?php $form = ActiveForm::begin(['action' => Url::to([
                                 'index',
                                 'SearchForm[scope]' => $model->scope,
-                                'SearchForm[result]' => []
+                                'SearchForm[isnewSearch]' => true
                             ]), 'method' => 'GET']); ?>
                             <div class="form-group form-group-search">
                                 <?= $form->field($model, 'keyword')->textInput([
@@ -243,7 +243,7 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                                                     'SearchForm[startDatetime]' => $model->startDatetime,
                                                     'SearchForm[endDatetime]' => $model->endDatetime,
                                                     'SearchForm[limitTypesIds]' => $model->limitTypesIds,
-                                                    'SearchForm[result]' => $results
+
                                                 ]); ?>
                         ' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_ALL) ? ' active' : '' ?>">
                         <div>
@@ -266,7 +266,7 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                                                     'SearchForm[startDatetime]' => $model->startDatetime,
                                                     'SearchForm[endDatetime]' => $model->endDatetime,
                                                     'SearchForm[limitTypesIds]' => $model->limitTypesIds,
-                                                    'SearchForm[result]' => $results
+
                                                 ]); ?>
                                      ' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_CONTENT) ? ' active' : '' ?>">
                         <div>
@@ -288,7 +288,7 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                                                     'SearchForm[startDatetime]' => $model->startDatetime,
                                                     'SearchForm[endDatetime]' => $model->endDatetime,
                                                     'SearchForm[limitTypesIds]' => $model->limitTypesIds,
-                                                    'SearchForm[result]' => $results
+
                                                 ]); ?>
                                      ' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_USER) ? ' active' : '' ?>">
                         <div>
@@ -310,7 +310,7 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                                                     'SearchForm[startDatetime]' => $model->startDatetime,
                                                     'SearchForm[endDatetime]' => $model->endDatetime,
                                                     'SearchForm[limitTypesIds]' => $model->limitTypesIds,
-                                                    'SearchForm[result]' => $results
+
                                                 ]); ?>
                                      ' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_SPACE) ? ' active' : '' ?>">
                         <div>
@@ -332,7 +332,7 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                                                     'SearchForm[startDatetime]' => $model->startDatetime,
                                                     'SearchForm[endDatetime]' => $model->endDatetime,
                                                     'SearchForm[limitTypesIds]' => $model->limitTypesIds,
-                                                    'SearchForm[result]' => $results
+
                                                 ]); ?>
                                                     ' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_EVENT) ? ' active' : '' ?>">
                         <div>
@@ -356,7 +356,7 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                                                     'SearchForm[startDatetime]' => $model->startDatetime,
                                                     'SearchForm[endDatetime]' => $model->endDatetime,
                                                     'SearchForm[limitTypesIds]' => $model->limitTypesIds,
-                                                    'SearchForm[result]' => $results
+
                                                 ]); ?>
                                  ' class="list-group-item<?= ($model->scope === SearchForm::SCOPE_CET_ENTITE) ? ' active' : '' ?>">
                         <div>
@@ -378,7 +378,7 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                                                     'SearchForm[distanceRecherche]' => $model->distanceRecherche,
                                                     'SearchForm[isCertifier]' => $model->isCertifier,
                                                     'SearchForm[limitTypesIds]' => $model->limitTypesIds,
-                                                    'SearchForm[result]' => $results
+
                                                 ]); ?>
                                  ' class="list-group-item">
                         <div>
@@ -442,7 +442,7 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                         'SearchForm[startDatetime]' => $model->startDatetime,
                         'SearchForm[endDatetime]' => $model->endDatetime,
                         'SearchForm[limitTypesIds]' => $model->limitTypesIds,
-                        'SearchForm[result]' => [],
+                        'SearchForm[isnewSearch]' => true,
                     ]), 'method' => 'GET']); ?>
                     <label class="control-label">Rechercher un évènement depuis le </label>
                     <?= $filter->field($model, 'startDatetime')->widget(DatePicker::classname(), [

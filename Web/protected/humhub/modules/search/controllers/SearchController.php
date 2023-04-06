@@ -231,7 +231,7 @@ class SearchController extends Controller
         ini_set('max_execution_time', '300');
         $model = new SearchForm();
         $model->load(Yii::$app->request->get());
-        if (!isset($_SESSION['result'])) {
+        if (!isset($_SESSION['result']) || $model->isnewSearch) {
             $_SESSION['result'] = [];
         }
         $limitSpaces = [];
