@@ -98,13 +98,13 @@ abstract class Search extends Component
      */
     public function rebuild()
     {
-        print "rebuild search index: launch \n";
+        //print "rebuild search index: launch \n";
         $this->flush();
-        print "search index deleted \n";
+        //print "search index deleted \n";
         $this->trigger(self::EVENT_ON_REBUILD);
-        print "triggered event \n";
+        //print "triggered event \n";
         $this->optimize();
-        print "search index optimized \n";
+        //print "search index optimized \n";
     }
 
     /**
@@ -117,7 +117,7 @@ abstract class Search extends Component
 
     public function coordToString($coord)
     {
-        print("on passe ici \n");
+        //print("on passe ici \n");
         $coordPositive = floatval($coord) + 200;
         $coordstr = strval($coordPositive);
         if (str_contains($coordstr, '.')) {
@@ -140,7 +140,7 @@ abstract class Search extends Component
                 $coordstr .= '0';
             }
         }
-        print($coordstr);
+        //print($coordstr);
         return $coordstr;
     }
 
@@ -209,7 +209,7 @@ abstract class Search extends Component
                 //Calcul de la distance $distanceKM
                 foreach ($obj->adresses as $adresse) {
                     $distanceKM = $this->distance($adresse->lat, $adresse->long, $commune->Latitude, $commune->Longitude);
-                    print 'distance entre ' . $obj->raisonSociale . ' et ' . $commune->commune . ' est calculer à ' . $distanceKM . " KM \n";
+                    //print 'distance entre ' . $obj->raisonSociale . ' et ' . $commune->commune . ' est calculer à ' . $distanceKM . " KM \n";
                     if ($distanceKM <= 40 && $distanceKM > 30) {
                         $meta['distanceCommune40'] .= $commune->id . '_';
                     }
@@ -237,7 +237,7 @@ abstract class Search extends Component
             foreach ($obj->cetTypes as $type) {
                 $meta['typesId'] .= $type->id . "_";
             }
-            print($obj->denominationcourante . " ajout de ses activites et categories dans le tableau meta recherches .\n");
+            //print($obj->denominationcourante . " ajout de ses activites et categories dans le tableau meta recherches .\n");
         }
 
         // Add content related meta data
@@ -323,7 +323,7 @@ abstract class Search extends Component
 
     protected function distance($lat1, $lng1, $lat2, $lng2, $miles = false)
     {
-        print "Calcul de distance ... \n";
+        //print "Calcul de distance ... \n";
         $pi80 = M_PI / 180;
         $lat1 *= $pi80;
         $lng1 *= $pi80;

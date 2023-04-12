@@ -110,4 +110,8 @@ class Adresse extends \yii\db\ActiveRecord
         }
         return $types;
     }
+
+    public function getAdresseSTR(){
+        return $this->lieu." ".$this->ville." ".$this->codePostal;
+    }
 }

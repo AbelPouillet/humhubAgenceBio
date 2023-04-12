@@ -97,7 +97,7 @@ class ZendLuceneSearch extends Search
             $field = Field::Text($key, $val, 'UTF-8');
             if ($key == 'productions' || $key == 'denominationcourante') {
                 $field->boost = 5.0;
-                print 'boost production';
+                //print 'boost production';
                 $doc->addField($field);
             } else {
                 $doc->addField($field);

@@ -270,38 +270,42 @@ class Entite extends \yii\db\ActiveRecord implements Searchable
         return Tableau::widget(['cet_entite' => $this]);
     }
 
-    function getFormatedAdresse() {
+    function getFormatedAdresse()
+    {
         $formatedAdresse = "";
-        foreach ($this->adresses as $adresse){
-            $formatedAdresse .= $adresse->lieu ." ". $adresse->codeCommune ." ". $adresse->ville ." ";
-
+        foreach ($this->adresses as $adresse) {
+            $formatedAdresse .= $adresse->lieu . " " . $adresse->codeCommune . " " . $adresse->ville . " ";
         }
         return $formatedAdresse;
     }
-    function getFormatedAdresse1(){
+    function getFormatedAdresse1()
+    {
         $formatedAdresse = "";
-        if(isset($this->adresses[0])){
-            $formatedAdresse .= $this->adresses[0]->lieu ." ". $this->adresses[0]->codeCommune ." ". $this->adresses[0]->ville ." ";
+        if (isset($this->adresses[0])) {
+            $formatedAdresse .= $this->adresses[0]->lieu . " " . $this->adresses[0]->codeCommune . " " . $this->adresses[0]->ville . " ";
         }
         return $formatedAdresse;
     }
-    function getFormatedAdresse2(){
+    function getFormatedAdresse2()
+    {
         $formatedAdresse = "";
-        if(isset($this->adresses[1])){
-            $formatedAdresse .= $this->adresses[1]->lieu ." ". $this->adresses[1]->codeCommune ." ". $this->adresses[1]->ville ." ";
+        if (isset($this->adresses[1])) {
+            $formatedAdresse .= $this->adresses[1]->lieu . " " . $this->adresses[1]->codeCommune . " " . $this->adresses[1]->ville . " ";
         }
         return $formatedAdresse;
     }
-    function getFormatedAdresse3(){
+    function getFormatedAdresse3()
+    {
         $formatedAdresse = "";
-        if(isset($this->adresses[2])){
-            $formatedAdresse .= $this->adresses[2]->lieu ." ". $this->adresses[2]->codeCommune ." ". $this->adresses[2]->ville ." ";
+        if (isset($this->adresses[2])) {
+            $formatedAdresse .= $this->adresses[2]->lieu . " " . $this->adresses[2]->codeCommune . " " . $this->adresses[2]->ville . " ";
         }
         return $formatedAdresse;
     }
-    function getFormatedTypes() {
+    function getFormatedTypes()
+    {
         $formatedTypes = "";
-        foreach ($this->cetTypes as $type){
+        foreach ($this->cetTypes as $type) {
             $formatedTypes .= $type->nom . " ";
         }
         return $formatedTypes;
@@ -322,20 +326,20 @@ class Entite extends \yii\db\ActiveRecord implements Searchable
 
         return $attributes;
     }
-    public function getDenominationCourante(){
+    public function getDenominationCourante()
+    {
         $denominationcourante = $this->denominationcourante;
-        foreach ($this->infossupplementaires as $infosupplementaire) {
-            if($infosupplementaire->nom == "admDenominationCourante"){
-                $denominationcourante .= ", ". $infosupplementaire->infossupplementairesValeurs[0];
-            }
-        }
+        $infosupplementaire = $this->getInfossupplementaires()->andWhere(["nom" => "admNomDusage"])->one();
+        $infossupplementaireValeur = $infosupplementaire->getInfossupplementairesValeurs()->andWhere(["cet_entite_id" => $this->id])->one();
+        $denominationcourante .= ", " . $infossupplementaireValeur->valeur;
         return $denominationcourante;
     }
-    public function getCodenafStr(){
+    public function getCodenafStr()
+    {
         $codenafs = "";
-        $codenafs .= "naf".str_replace('.','',$this->codeNAF);
-        foreach ($this->productions as $production){
-            $codenafs .= " , naf".str_replace('.','',$production->code);
+        $codenafs .= "naf" . str_replace('.', '', $this->codeNAF);
+        foreach ($this->productions as $production) {
+            $codenafs .= " , naf" . str_replace('.', '', $production->code);
         }
         return $codenafs;
     }
@@ -382,7 +386,8 @@ class Entite extends \yii\db\ActiveRecord implements Searchable
         return $activites;
     }
 
-    public function getTypeStr(){
+    public function getTypeStr()
+    {
         $types = "";
         foreach ($this->cetTypes as $index => $index) {
             if ($index == 0) {
