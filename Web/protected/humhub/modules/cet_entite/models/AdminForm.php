@@ -74,14 +74,12 @@ class AdminForm extends Model
             if ($infossupplementaireValeur) {
                 $infossupplementaireValeur->valeur = $newNomDusage;
                 $infossupplementaireValeur->save(false);
-                Yii::$app->search->update($this->entite);
             } else {
                 $newInfossupplementaireValeur = new Infossupplementairesvaleur();
                 $newInfossupplementaireValeur->valeur = $newNomDusage;
                 $newInfossupplementaireValeur->cet_entite_id = $this->entite->id;
                 $newInfossupplementaireValeur->pk_cet_infos_supplementaires = $infossupplementaire->id;
                 if ($newInfossupplementaireValeur->save(false)) {
-                    Yii::$app->search->update($this->entite);
                 }
             }
         } else {
@@ -99,7 +97,7 @@ class AdminForm extends Model
             $newInfossupplementaireValeur->cet_entite_id = $this->entite->id;
             $newInfossupplementaireValeur->pk_cet_infos_supplementaires = $newInfossupplementaire->id;
             if ($newInfossupplementaireValeur->save(false)) {
-                Yii::$app->search->update($this->entite);
+
             }
         }
         $this->nomDusage = $newNomDusage;
