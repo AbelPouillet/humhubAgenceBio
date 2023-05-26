@@ -58,6 +58,8 @@ use Yii;
  * @property Siteweb[] $sitewebs
  * @property Joinentitetype[] $cetEntiteHasCetTypes
  * @property Type[] $cetTypes
+ * @property EntiteTag[] $cetEntiteTags
+ * @property EntiteTagHasEntite[] $cetEntiteTagHasEntites
  */
 class Entite extends \yii\db\ActiveRecord implements Searchable
 {
@@ -258,6 +260,22 @@ class Entite extends \yii\db\ActiveRecord implements Searchable
         return $this->hasMany(Joinentitetype::class, ['cet_entite_id' => 'id']);
     }
 
+
+    public function getEntiteTagHasEntites()
+    {
+        return $this->hasMany(EntiteTagHasEntite::class, ['cet_entite_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[EntiteTags]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEntiteTags()
+    {
+        return $this->hasMany(EntiteTag::class, ['id' => 'cet_entite_tag_id'])->viaTable('cet_entite_tag_has_cet_entite', ['cet_entite_id' => 'id']);
+    }
+
     /**
      * @return mixed
      */
@@ -330,8 +348,13 @@ class Entite extends \yii\db\ActiveRecord implements Searchable
     {
         $denominationcourante = $this->denominationcourante;
         $infosupplementaire = $this->getInfossupplementaires()->andWhere(["nom" => "admNomDusage"])->one();
-        $infossupplementaireValeur = $infosupplementaire->getInfossupplementairesValeurs()->andWhere(["cet_entite_id" => $this->id])->one();
-        $denominationcourante .= ", " . $infossupplementaireValeur->valeur;
+        if ($infosupplementaire) {
+            $infossupplementaireValeur = $infosupplementaire->getInfossupplementairesValeurs()->andWhere(["cet_entite_id" => $this->id])->one();
+            if ($infossupplementaireValeur) {
+                $denominationcourante .= ", " . $infossupplementaireValeur->valeur;
+            }
+        }
+
         return $denominationcourante;
     }
     public function getCodenafStr()

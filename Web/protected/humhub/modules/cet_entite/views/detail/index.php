@@ -1,6 +1,7 @@
 <?php
 
 use humhub\modules\cet_infos_supplementaires_valeur\models\Infossupplementairesvaleur;
+use humhub\modules\cet_entite\widgets\EntiteTagPicker;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
@@ -72,6 +73,8 @@ use yii\widgets\ActiveForm;
             <?= $form->field($adminForm, 'telephone')->textInput(['label'=>"Telephone"]) ?>
             <?= $form->field($adminForm, 'email')->textInput(['label'=>"Email"]) ?>
             <?= $form->field($adminForm, 'siteweb')->textInput(['label'=>"Site Web"]) ?>
+            <?=  $form->field($adminForm, 'tags')
+            ->widget(EntiteTagPicker::class, ['entiteID' => $cet_entite->id])->label(false) ?>
             <?= Html::submitButton('Enregistrer') ?>
             <?php ActiveForm::end(); ?>
         </div>

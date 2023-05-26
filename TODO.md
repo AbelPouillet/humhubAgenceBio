@@ -42,21 +42,8 @@ Vérifier par le siret si le producteur est éxistant {
 ## Sauvegarder les modification impacter par les MAJ humhub
 
 
-## Recherche HumHub
+## Appeler la recherche qu'une fois
 
-retirer le picker Catégorie DONE
-
-renommer cetEntité en Annuaire avec carte Done
-
-ajouter Annuaire tableau Done
-
-Retirer le titre Résultat sur la map DONE
-
-Mettre en prod une fois finit 
-
-Mapping Produit => Production pour attribuer les code naf (Utiliser la table cet_naf_produit)
-
-## Optimiser la recherche
 ["buildQueryTime"]=> float(0.20901489257812) [0]=> array(1) { ["FindTime"]=> float(119.31021380424) } [1]=> array(1) { ["paginationTime"]=> float(0.016572952270508) 
 Tester sur les boost des champs
 
@@ -113,3 +100,57 @@ test searchattribute 1 et distance 1 :
 
 test searchattribute 2 :
 ["buildQueryTime"]=> float(0.15651702880859) [0]=> array(1) { ["FindTime"]=> float(4.295156955719) } [1]=> array(1) { ["paginationTime"]=> float(0.086230039596558) 
+
+## Recherche par distances mesures:
+
+10 km:
+array(3) { ["buildQueryTime"]=> float(0.21249985694885) [0]=> array(1) { ["FindTime"]=> float(0.94003701210022) } [1]=> array(1) { ["paginationTime"]=> float(0.065561056137085) } } array(3) { ["buildQueryTime"]=> float(0.0051510334014893) [0]=> array(1) { ["FindTime"]=> float(0.22027087211609) } [1]=> array(1) { ["paginationTime"]=> float(0.41987109184265) } }
+
+40 km:
+array(3) { ["buildQueryTime"]=> float(0.21178197860718) [0]=> array(1) { ["FindTime"]=> float(93.482742071152) } [1]=> array(1) { ["paginationTime"]=> float(0.057512044906616) } } array(3) { ["buildQueryTime"]=> float(0.0054671764373779) [0]=> array(1) { ["FindTime"]=> float(90.336533069611) } [1]=> array(1) { ["paginationTime"]=> float(1.7961437702179) } }
+
+## Mieux Séparer les distances par zones :
+
+10 km:
+array(3) { ["buildQueryTime"]=> float(0.16496109962463) [0]=> array(1) { ["FindTime"]=> float(0.76763701438904) } [1]=> array(1) { ["paginationTime"]=> float(0.033241033554077) } }
+
+20km:
+{ ["buildQueryTime"]=> float(0.19296097755432) [0]=> array(1) { ["FindTime"]=> float(2.7879438400269) } [1]=> array(1) { ["paginationTime"]=> float(0.052726030349731) } }
+
+30km:
+ { ["buildQueryTime"]=> float(0.22730302810669) [0]=> array(1) { ["FindTime"]=> float(14.151912927628) } [1]=> array(1) { ["paginationTime"]=> float(0.056056022644043) } }
+
+40 km:
+array(3) { ["buildQueryTime"]=> float(0.19741916656494) [0]=> array(1) { ["FindTime"]=> float(30.138770103455) } [1]=> array(1) { ["paginationTime"]=> float(0.059139966964722) } }
+
+## Recherche par coordonnées :
+
+10 km:
+{ ["buildQueryTime"]=> float(0.21149110794067) [0]=> array(1) { ["FindTime"]=> float(2.9463529586792) } [1]=> array(1) { ["paginationTime"]=> float(0.057106971740723) } }
+
+20km:
+array(3) { ["buildQueryTime"]=> float(0.20179200172424) [0]=> array(1) { ["FindTime"]=> float(4.9068400859833) } [1]=> array(1) { ["paginationTime"]=> float(0.052983999252319) } }
+
+30km:
+array(3) { ["buildQueryTime"]=> float(0.14019298553467) [0]=> array(1) { ["FindTime"]=> float(7.6637330055237) } [1]=> array(1) { ["paginationTime"]=> float(0.034801959991455) } }
+
+40 km:
+{ ["buildQueryTime"]=> float(0.1900360584259) [0]=> array(1) { ["FindTime"]=> float(9.1062920093536) } [1]=> array(1) { ["paginationTime"]=> float(0.054894924163818) } }
+
+Nombres maximum addresse 32
+109303
+## Recherche par coordonnées sur toutes les adresses:
+
+10 km:
+array(3) { ["buildQueryTime"]=> float(35.413099050522) [0]=> array(1) { ["FindTime"]=> float(56.901561975479) } [1]=> array(1) { ["paginationTime"]=> float(0.063422203063965) } }
+20 km:
+
+30 km:
+
+40 km:
+
+## Recherche par carré minmax:
+ 10km:  ["buildQueryTime"]=> float(0.2824809551239) [0]=> array(1) { ["FindTime"]=> float(18.662551164627) } [1]=> array(1) { ["paginationTime"]=> float(0.063510179519653) } } array(3) { ["buildQueryTime"]=> float(0.0094559192657471) [0]=> array(1) { ["FindTime"]=> float(18.775280952454) } [1]=> array(1) { ["paginationTime"]=> float(0.2626678943634)
+
+ 40km: ["buildQueryTime"]=> float(0.26057291030884) [0]=> array(1) { ["FindTime"]=> float(32.927497148514) } [1]=> array(1) { ["paginationTime"]=> float(0.064902067184448) } } array(3) { ["buildQueryTime"]=> float(0.00913405418396) [0]=> array(1) { ["FindTime"]=> float(16.537523031235) } [1]=> array(1) { ["paginationTime"]=> float(1.1827399730682)
+

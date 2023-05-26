@@ -29,6 +29,7 @@ class DetailController extends Controller
         $adminForm->setNomDusage(Yii::$app->request->post("AdminForm")["nomDusage"]);
         $adminForm->setSiteweb(Yii::$app->request->post("AdminForm")["siteweb"]);
         $adminForm->setTelephone(Yii::$app->request->post("AdminForm")["telephone"]);
+        $adminForm->setTags(Yii::$app->request->post("AdminForm")["tags"]);
         $this->redirect(['index', 'id' => $id]);
     }
 }

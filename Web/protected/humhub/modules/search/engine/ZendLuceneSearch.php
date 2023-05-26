@@ -74,7 +74,6 @@ class ZendLuceneSearch extends Search
         $index = $this->getIndex();
 
         $doc = new Document();
-
         // Add Meta Data fields
         foreach ($this->getMetaInfoArray($obj) as $fieldName => $fieldValue) {
 

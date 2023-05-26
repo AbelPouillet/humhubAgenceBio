@@ -38,6 +38,8 @@ use Yii;
  * @property Siteweb[] $sitewebs
  * @property Joinentitetype[] $cetEntiteHasCetTypes
  * @property Type[] $cetTypes
+ * @property EntiteTag[] $cetEntiteTag
+ * @property EntiteTagHasEntite[] $cetEntiteTagHasEntite
  */
 class Entite extends \yii\db\ActiveRecord
 {
@@ -251,5 +253,20 @@ class Entite extends \yii\db\ActiveRecord
     public function getCetTypes()
     {
         return $this->hasMany(Type::class, ['id' => 'cet_type_id'])->viaTable('cet_entite_has_cet_type', ['cet_entite_id' => 'id']);
+    }
+
+    public function getEntiteTagHasEntites()
+    {
+        return $this->hasMany(EntiteTagHasEntite::class, ['cet_entite_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[EntiteTags]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEntiteTags()
+    {
+        return $this->hasMany(EntiteTag::class, ['id' => 'cet_entite_tag_id'])->viaTable('cet_entite_tag_has_cet_entite', ['cet_entite_id' => 'id']);
     }
 }

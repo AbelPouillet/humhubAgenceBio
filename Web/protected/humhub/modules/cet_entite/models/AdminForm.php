@@ -20,6 +20,9 @@ class AdminForm extends Model
     public string $telephone;
     public string $email;
     public string $siteweb;
+
+    public $tags = [];
+
     public function attributeLabels()
     {
         return [
@@ -38,6 +41,11 @@ class AdminForm extends Model
         $this->telephone = $this->getTelephone();
         $this->email = $this->getEmail();
         $this->siteweb = $this->getSiteweb();
+        $this->tags = $this->entite->getEntiteTags()->all();
+    }
+
+    public function setTags($tags){
+        EntiteTag::attach($this->entite, $tags);
     }
     public function getNomDusage()
     {
@@ -276,7 +284,7 @@ class AdminForm extends Model
                 $siteweb = $this->entite->sitewebs[0]->url ? $this->entite->sitewebs[0]->url : "";
             }
         } else {
-            $siteweb = $this->entite->sitewebs[0]->url ? $this->entite->sitewebs[0]->url : "";
+            $siteweb = isset($this->entite->sitewebs[0]->url) ? $this->entite->sitewebs[0]->url : "";
         }
         return $siteweb;
     }

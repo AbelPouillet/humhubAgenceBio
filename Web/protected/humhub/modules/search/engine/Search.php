@@ -162,6 +162,10 @@ abstract class Search extends Component
         // reconstruction l'index suite aux modifications du tableau meta
         if ($obj instanceof Entite) {
             //isCertifier
+            $meta['contentTags'] = "";
+            foreach($obj->getEntiteTags()->all() as $tag){
+                $meta['contentTags'] .= $tag->nom . " ";
+            }
             $isCertifier = false;
             foreach ($obj->certificats as $certificat) {
                 if ($certificat->etatCertification == "ENGAGEE") {
