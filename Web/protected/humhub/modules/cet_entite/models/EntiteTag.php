@@ -69,7 +69,8 @@ class EntiteTag extends \yii\db\ActiveRecord
      * @param Entite $entite
      * @return EntiteTag[]
      */
-    public function getByEntite($entite){
+    public function getByEntite($entite)
+    {
         return $entite->getEntiteTags()->all();
     }
     /**
@@ -81,10 +82,11 @@ class EntiteTag extends \yii\db\ActiveRecord
     {
 
         return parent::find()
-        ->orderBy('nom ASC');
+            ->orderBy('nom ASC');
     }
 
-    public static function attach(Entite $entite, $tags){
+    public static function attach(Entite $entite, $tags)
+    {
         //print(" Se lie avec ce tableau de tag :". var_dump($tags));
         $result = [];
         //Nettoyage des relations
@@ -93,23 +95,28 @@ class EntiteTag extends \yii\db\ActiveRecord
             $lien->delete();
         }
         $canAdd = Yii::$app->user->isAdmin();
-        if(empty($tags)){
+        if (empty($tags)) {
             return;
         }
         $tags = is_array($tags) ? $tags : [$tags];
-        foreach( $tags as $tag ){
-            if(is_string($tag) && strpos($tag, '_add:') === 0 && $canAdd){
+        foreach ($tags as $tag) {
+            if (is_string($tag) && strpos($tag, '_add:') === 0 && $canAdd) {
                 $newentitetag = new EntiteTag([
                     "nom" => substr($tag, strlen('_add:')),
                 ]);
-                if($newentitetag->save()){
+                if ($newentitetag->save()) {
                     $result[] = $newentitetag;
                 }
-            }elseif ($tag instanceof EntiteTag) {
+            } elseif (is_numeric($tag)) {
+                $tag = EntiteTag::findOne(['id' => (int) $tag]);
+                if ($tag) {
+                    $result[] = $tag;
+                }
+            } elseif ($tag instanceof EntiteTag) {
                 $result[] = $tag;
             }
         }
-        foreach($result as $tag){
+        foreach ($result as $tag) {
             $newlinkTag = new EntiteTagHasEntite([
                 "cet_entite_tag_id" => $tag->id,
                 "cet_entite_id" => $entite->id

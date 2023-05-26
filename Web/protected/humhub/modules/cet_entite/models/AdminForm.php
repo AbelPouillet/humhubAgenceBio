@@ -30,7 +30,8 @@ class AdminForm extends Model
             'adresse' => "Adresse",
             'telephone' => "Telephone",
             'email' => "Email",
-            'siteweb' => "Site Web"
+            'siteweb' => "Site Web",
+            'tags' => 'Etiquettes'
         ];
     }
     public function initAdminForm()

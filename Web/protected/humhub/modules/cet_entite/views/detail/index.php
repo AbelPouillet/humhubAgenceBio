@@ -74,7 +74,7 @@ use yii\widgets\ActiveForm;
             <?= $form->field($adminForm, 'email')->textInput(['label'=>"Email"]) ?>
             <?= $form->field($adminForm, 'siteweb')->textInput(['label'=>"Site Web"]) ?>
             <?=  $form->field($adminForm, 'tags')
-            ->widget(EntiteTagPicker::class, ['entiteID' => $cet_entite->id])->label(false) ?>
+            ->widget(EntiteTagPicker::class, ['entiteID' => $cet_entite->id])->label("Etiquette(s)") ?>
             <?= Html::submitButton('Enregistrer') ?>
             <?php ActiveForm::end(); ?>
         </div>
