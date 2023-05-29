@@ -4,7 +4,9 @@ use yii\helpers\Html;
 ?>
 
 <tr><td> <?= Html::encode($cet_entite->id); ?></td>
-<td> <?= Html::encode($cet_entite->denominationcourante); ?></td>
+<!--TODO Localost à changer en prod -->
+<td><a href="http://localhost:9081/index.php?r=cet_entite%2Fdetail&id=<?=$cet_entite->id ?>" target="_blank">
+ <?= Html::encode($cet_entite->denominationcourante); ?> </a></td>
 <td><?= Html::encode($cet_entite->getFormatedAdresse1()); ?></td>
 <td><?= Html::encode($cet_entite->getFormatedAdresse2()); ?></td>
 <td><?= Html::encode($cet_entite->getFormatedAdresse3()); ?></td>
@@ -13,4 +15,11 @@ use yii\helpers\Html;
 <td><?= Html::encode($cet_entite->gerant); ?></td>
 <td><?= Html::encode($cet_entite->email); ?></td>
 <td><?= Html::encode($cet_entite->telephone); ?></td>
-<td><?= Html::encode($cet_entite->telephoneCommerciale); ?></td></tr>
+<td><?= Html::encode($cet_entite->telephoneCommerciale); ?></td>
+<td>
+    <?php foreach($cet_entite->getEntiteTags()->all() as $tag):?>
+        <?= Html::encode($tag->nom); ?>
+        &nbsp;
+    <?php endforeach?>
+</td>
+</tr>

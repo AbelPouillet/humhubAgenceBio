@@ -23,6 +23,7 @@ class DetailController extends Controller
     {
         $adminForm = new AdminForm();
         $adminForm->entiteId = intval($id, 10);
+        $cet_entite = Entite::findOne(['id' => intval($id, 10)]);
         $adminForm->initAdminForm();
         $adminForm->setAdresse(Yii::$app->request->post("AdminForm")["adresse"]);
         $adminForm->setEmail(Yii::$app->request->post("AdminForm")["email"]);
@@ -30,6 +31,7 @@ class DetailController extends Controller
         $adminForm->setSiteweb(Yii::$app->request->post("AdminForm")["siteweb"]);
         $adminForm->setTelephone(Yii::$app->request->post("AdminForm")["telephone"]);
         $adminForm->setTags(Yii::$app->request->post("AdminForm")["tags"]);
+        Yii::$app->search->update($cet_entite);
         $this->redirect(['index', 'id' => $id]);
     }
 }

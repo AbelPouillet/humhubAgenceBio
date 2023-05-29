@@ -22,6 +22,14 @@ use yii\helpers\Html;
                 <?php if($cet_entite->getTypeStr() !== ""): ?>
                     <h5>Types :<?= Html::encode($cet_entite->getTypeStr()); ?></h5>
                 <?php endif ?>
+                <?php if($cet_entite->getEntiteTags()->all() !== []):?>
+                    <h5> Etiquette(s): </h5>
+                    <?php foreach($cet_entite->getEntiteTags()->all() as $tag): ?>
+                    <span class="label label-light">
+                        <i class="fa fa-star" aria-hidden="true"></i> <?= Html::encode($tag->nom); ?>
+                    </span>
+                    <?php endforeach?>
+                <?php endif ?>
             </div>
         </div>
 

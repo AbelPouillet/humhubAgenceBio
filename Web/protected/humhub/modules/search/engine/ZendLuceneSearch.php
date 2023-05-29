@@ -221,7 +221,7 @@ class ZendLuceneSearch extends Search
         $end = microtime(true);
         $elapsed_time = $end - $start;
         $tabtime[] = ["paginationTime" => $elapsed_time];
-        //print var_dump($tabtime);
+        print var_dump($tabtime);
         return $resultSet;
     }
 

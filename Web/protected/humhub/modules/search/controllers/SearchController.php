@@ -163,12 +163,12 @@ class SearchController extends Controller
         ];
         $searchMapResultSet =  Yii::$app->search->find($model->keyword, $optionsMap);
         $resultMap = $searchMapResultSet->getResultInstances();
-        $tableauEnString = "<html><head></head><table><thead><tr><td>Num</td><td>Producteur</td><td>Adresse1</td><td>Adresse2</td><td>Adresse3</td><td>Type</td><td>Personne</td><td>Email</td><td>Tel 1</td><td>Tel 2</td></tr></thead><tbody>";
         foreach ($resultMap as $resMap) {
-            $tableauEnString .= $resMap->getEntiteEnTableau();
+            $rows[] = $resMap->getEntiteEnTableau();
         }
-        $tableauEnString .= "</tbody></table></html>";
-        echo $tableauEnString;
+        return $this->render('tableau', [
+            'rows' => $rows
+        ]);
     }
     public function actionNewsletter()
     {
