@@ -221,7 +221,7 @@ class ZendLuceneSearch extends Search
         $end = microtime(true);
         $elapsed_time = $end - $start;
         $tabtime[] = ["paginationTime" => $elapsed_time];
-        print var_dump($tabtime);
+        //print var_dump($tabtime);
         return $resultSet;
     }
 
@@ -468,7 +468,7 @@ class ZendLuceneSearch extends Search
         }
         //print $query->__toString();
         if ($options['isCertifier']) {
-            $strQuery = "(isCertifier:true)";
+            $strQuery = "(!isCertifier:false)";
             $queryParserStr = new QueryParser();
             $queryParserStr->setDefaultOperator(QueryParser::B_OR);
             $queryStr = $queryParserStr->parse($strQuery);

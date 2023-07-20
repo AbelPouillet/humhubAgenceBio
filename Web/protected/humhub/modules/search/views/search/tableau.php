@@ -1,5 +1,4 @@
-<?php use humhub\libs\Html;
-?>
+
 <html>
 
 <head></head>

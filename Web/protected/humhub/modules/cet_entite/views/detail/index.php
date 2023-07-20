@@ -52,12 +52,12 @@ use yii\widgets\ActiveForm;
                 echo isset($siteweb->url) ? '<strong>'.$siteweb->getTypesitewebsStr().':</strong> <a href=' . $siteweb->url . '>' . $siteweb->url . '</a><br>' : '';
             }
         }
-        if ($cet_entite->infossupplementaires) {
-            foreach ($cet_entite->infossupplementaires as $infossupplementaire) {
-                $valeur = Infossupplementairesvaleur::findOne(['cet_entite_id' => $cet_entite->id, 'pk_cet_infos_supplementaires' => $infossupplementaire->id]);
-                echo '<div><strong>' . $infossupplementaire->label . ':</strong> ' . $valeur->valeur . '</div>';
+        if ($infossupp) {
+            foreach ($infossupp as $label => $valeur) {
+                echo '<div><strong>' . $label . ':</strong> ' . $valeur . '</div>';
             }
         }
+
         ?>
     </div>
 

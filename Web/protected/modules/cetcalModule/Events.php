@@ -18,11 +18,7 @@ class Events
             'label' => 'Annuaire',
             'icon' => '<i class="fa fa-map-marker"></i>',
             'url' => Url::to([
-                '/search/search/index',
-                'SearchForm[scope]' => 'cet_entite',
-                'SearchForm[limitCommunesIds]' => [32759],
-                'SearchForm[distanceRecherche]' => 10,
-                'SearchForm[avancee]'=>true,
+                '/search/search/getlocalisation'
             ]),
             'sortOrder' => 99999,
             'isActive' => (Yii::$app->controller->module && Yii::$app->controller->module->id == 'cetcalModule'),

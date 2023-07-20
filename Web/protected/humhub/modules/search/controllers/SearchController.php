@@ -55,6 +55,8 @@ class SearchController extends Controller
 
     public $distanceRecherche = 10;
 
+    public $distanceCommune = 10;
+
     public $isCertifier = false;
 
     public $startDatetime = '';
@@ -77,6 +79,26 @@ class SearchController extends Controller
             ['login']
         ];
     }
+    protected function distance($lat1, $lng1, $lat2, $lng2, $miles = false)
+    {
+        //print "Calcul de distance ... \n";
+        $pi80 = M_PI / 180;
+        $lat1 *= $pi80;
+        $lng1 *= $pi80;
+        $lat2 *= $pi80;
+        $lng2 *= $pi80;
+
+        $r = 6372.797; // rayon moyen de la Terre en km
+        $dlat = $lat2 - $lat1;
+        $dlng = $lng2 - $lng1;
+        $a = sin($dlat / 2) * sin($dlat / 2) + cos($lat1) * cos($lat2) * sin(
+            $dlng / 2
+        ) * sin($dlng / 2);
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+        $km = $r * $c;
+
+        return ($miles ? ($km * 0.621371192) : $km);
+    }
     public function actionTableauentite()
     {
         ini_set('memory_limit', '-1');
@@ -84,10 +106,6 @@ class SearchController extends Controller
         $model = new SearchForm();
         $model->load(Yii::$app->request->get());
 
-        if ($model->scope == SearchForm::SCOPE_CET_ENTITE) {
-            $type = SearchForm::SCOPE_CET_ENTITE;
-            $displayMap = true;
-        }
         $dataActivites = [];
         $activites = Activite::find()->select('id, nom')->all();
         $dataActivites = ArrayHelper::map($activites, 'id', 'nom');
@@ -156,19 +174,27 @@ class SearchController extends Controller
             'limitTypes' => $limitTypes,
             'distanceRecherche' => $this->distanceRecherche,
             'isCertifier' => $this->isCertifier,
-            'displayMap' => $displayMap,
             'model' => '',
-            'type' => $type,
             'displayEvent' => false,
         ];
+        //print(var_dump($optionsMap));
         $searchMapResultSet =  Yii::$app->search->find($model->keyword, $optionsMap);
         $resultMap = $searchMapResultSet->getResultInstances();
         foreach ($resultMap as $resMap) {
-            $rows[] = $resMap->getEntiteEnTableau();
+            if ($resMap instanceof Entite) {
+                $rows[] = $resMap->getEntiteEnTableau();
+            }
         }
         return $this->render('tableau', [
             'rows' => $rows
         ]);
+    }
+    public function actionGetlocalisation()
+    {
+        return $this->render('localisation');
+    }
+    public function actionPostlocalisation()
+    {
     }
     public function actionNewsletter()
     {
@@ -289,7 +315,42 @@ class SearchController extends Controller
             }
             $this->showResults = true;
         }
-        $limitCommunes = [];
+        if (!empty($model->userlat) && !empty($model->userlong)) {
+            $userlat = $model->userlat;
+            $userlong = $model->userlong;
+            $limitCommunes = [];
+            $curl = curl_init("https://revgeocode.search.hereapi.com/v1/revgeocode?at=" . $userlat . "%2C" . $userlong . "&lang=fr&apiKey=1zqnXZ0S3ayJJVGkzobsUIuSJjlmMX7-6XeGT-h8v08");
+            curl_setopt($curl, CURLOPT_HEADER, false);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            $result = json_decode(curl_exec($curl), true);
+            //print(var_dump($result));
+            $maxpointsimilare = 0;
+            foreach(CetCommune::findAll(["code_postal" => $result["items"][0]["address"]["postalCode"]]) as $commune){
+                $currentpointsimilar = similar_text($result["items"][0]["address"]["city"], $commune->commune);
+                if($currentpointsimilar > $maxpointsimilare){
+                    $maxpointsimilare = $currentpointsimilar;
+                    $limitCommunes = [];
+                    $limitCommunes[] = $commune;
+                }
+
+            }
+            /*$limitCommunes[] = CetCommune::findOne(["code_postal" => $result["items"][0]["address"]["postalCode"], "commune" => $result["items"][0]["address"]["city"]]);
+            if ($limitCommunes[0] === null) {
+                $limitCommunes = [];
+
+                $limitCommunes[] = CetCommune::findOne(["code_postal" => $result["items"][0]["address"]["postalCode"]]);
+            }*/
+            //print(var_dump($limitCommunes));
+            /*foreach (CetCommune::find()->all() as $commune) {
+                if ($this->distanceCommune > $this->distance($commune->Latitude, $commune->Longitude, $userlat, $userlong)) {
+                    $limitCommunes[] = $commune;
+                }
+            }*/
+        } else {
+            $userlat = null;
+            $userlong = null;
+            $limitCommunes = [];
+        }
         $this->distanceRecherche = $model->distanceRecherche;
         if (!empty($model->limitCommunesIds)) {
             foreach ($model->limitCommunesIds as $id) {
@@ -361,7 +422,7 @@ class SearchController extends Controller
                 'displayEvent' => $displayEvent,
                 'endDatetime' => $this->endDatetime,
             ];
-
+            //print(var_dump($options));
             $searchResultSet = Yii::$app->search->find($model->keyword, $options);
             $total = $searchResultSet->total;
             // Store static for use in widgets (e.g. fileList)
@@ -435,6 +496,8 @@ class SearchController extends Controller
             'isCertifier' => $this->isCertifier,
             'startDatetime' => $this->startDatetime,
             'endDatetime' => $this->endDatetime,
+            'userlat' => $userlat,
+            'userlong' => $userlong
         ]);
     }
 }

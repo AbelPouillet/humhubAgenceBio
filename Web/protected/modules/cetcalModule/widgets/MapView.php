@@ -45,6 +45,10 @@ class MapView extends Widget
 
     public $distance = 10;
 
+    public $userlat = null;
+
+    public $userlong = null;
+
     public function run()
     {
         $settings = Yii::$app->getModule('cetcalModule')->settings;
@@ -64,7 +68,9 @@ class MapView extends Widget
                 ],
                 'apikey' => $settings->get('geocoding_api_key', 'pk.eyJ1IjoiZGVjaWRlbGFiaW9sb2NhbGUiLCJhIjoiY2t4c3J1b3pmMTV4cDJzbXZ6aWtxOTNrbiJ9.UrHhSVL477MEsqwLPJubrQ'),
                 'communesLatLng' => $this->getCoordinates(),
-                'distance' => $this->distance
+                'distance' => $this->distance,
+                'userlat' => $this->userlat ? $this->userlat : "false",
+                'userlong' => $this->userlong ? $this->userlong : "false",
             ]
         );
     }

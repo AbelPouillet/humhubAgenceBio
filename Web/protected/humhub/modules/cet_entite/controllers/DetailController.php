@@ -5,6 +5,9 @@ namespace humhub\modules\cet_entite\controllers;
 use humhub\components\Controller;
 use humhub\modules\cet_entite\models\AdminForm;
 use humhub\modules\cet_entite\models\Entite;
+use humhub\modules\cet_infos_supplementaires\models\Infossupplementaires;
+use humhub\modules\cet_infos_supplementaires_valeur\models\Infossupplementairesvaleur;
+use humhub\modules\cet_join_infos_supplementaires_entite\models\Joininfossupplementairesentite;
 use Yii;
 
 class DetailController extends Controller
@@ -17,7 +20,16 @@ class DetailController extends Controller
         $adminForm->entiteId = intval($id, 10);
         $adminForm->initAdminForm();
         $this->pageTitle = "Detail";
-        return $this->render('index', ['cet_entite' => $cet_entite, 'adminForm' => $adminForm]);
+        $infossupptab = [];
+        $jointab = Joininfossupplementairesentite::find()->where(['cet_entite_id' => $id])->all();
+        foreach($jointab as $join){
+            $infosupp = Infossupplementaires::findOne(["id" => $join->cet_infos_supplementaires_id]);
+            $label = $infosupp->label;
+            $infosuppval = Infossupplementairesvaleur::findOne(["pk_cet_infos_supplementaires" => $join->cet_infos_supplementaires_id , "cet_entite_id" => $id]);
+            $valeur = $infosuppval->valeur;
+            $infossupptab[$label]= $valeur;
+        }
+        return $this->render('index', ['cet_entite' => $cet_entite, 'adminForm' => $adminForm, 'infossupp' => $infossupptab]);
     }
     public function actionAdminpost($id)
     {

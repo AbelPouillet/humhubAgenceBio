@@ -155,7 +155,7 @@ humhub\modules\stream\assets\StreamAsset::register($this);
 
                             <div id="collapse-search-settings" class="panel-collapse collapse">
                                 <br>
-                                <label class="control-label">Rechercher uniquement certains types d'Entités:</label>
+                                <label class="control-label">Recherché uniquement certains types d'Entités</label>
                                 <?= $form->field($model, 'limitActivitesIds')->widget(Select2::classname(), [
                                     'data' => $dataActivites,
                                     'language' => 'fr',
@@ -182,7 +182,7 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                                 ])->label(false);
                                 ?>
                                 <br>
-                                <label class="control-label">Rechercher aux alentours de communes </label>
+                                <label class="control-label">Recherché aux alentours de communes </label>
                                 <?= CommunePickerField::widget([
                                     'id' => 'commune_filter',
                                     'model' => $model,
@@ -398,6 +398,8 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                         'cetEntites' => $resultMap,
                         'communes' => $limitCommunes,
                         'distance' => $distanceRecherche,
+                        'userlat' => $userlat,
+                        'userlong' => $userlong,
                     ]) ?>
                 </div>
                 <div class="searchResults col-md-4">
@@ -444,7 +446,7 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                         'SearchForm[limitTypesIds]' => $model->limitTypesIds,
                         'SearchForm[isnewSearch]' => true,
                     ]), 'method' => 'GET']); ?>
-                    <label class="control-label">Rechercher un évènement depuis le </label>
+                    <label class="control-label">Recherché un évènement depuis le </label>
                     <?= $filter->field($model, 'startDatetime')->widget(DatePicker::classname(), [
                         'dateFormat' => 'dd-MM-yyyy',
                         'clientOptions' => [
@@ -458,7 +460,7 @@ humhub\modules\stream\assets\StreamAsset::register($this);
                     ])->label(false) ?>
                 </div>
                 <div class="col-md-5">
-                    <label class="control-label"> Rechercher un évènement jusqu'au </label>
+                    <label class="control-label"> Recherché un évènement jusqu'au </label>
                     <?= $filter->field($model, 'endDatetime')->widget(DatePicker::classname(), [
                         'dateFormat' => 'dd-MM-yyyy',
                         'clientOptions' => [

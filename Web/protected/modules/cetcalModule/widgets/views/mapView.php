@@ -498,7 +498,16 @@ MapAssetBundle::register($this);
                         markers.addLayer(marker);
                     }
                 });
-
+                //Ajout de la position user
+                userlat = <?= $userlat ?>;
+                userlong = <?= $userlong ?>;
+                if(userlat && userlong){
+                    var marker = L.marker([userlat, userlong]/*, {
+                            // Icon à définir icon: icon_carto
+                        }*/);
+                    marker.bindPopup('<span> Vous êtes içi </span>');
+                    markers.addLayer(marker);
+                }
                 map.addLayer(markers);
 
                 //TODO cercle autour des communes sélectionnés

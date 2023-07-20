@@ -44,6 +44,9 @@ class SearchForm extends Model
 
     public $avancee = false;
 
+    public $userlat = null;
+    public $userlong = null;
+
     public function init()
     {
         if (Yii::$app->request->get('page')) {
@@ -57,7 +60,7 @@ class SearchForm extends Model
     public function rules()
     {
         return [
-            [['keyword' , 'scope', 'isnewSearch', 'page', 'limitSpaceGuids', 'limitTypesIds' ,'limitActivitesIds', 'limitCategoriesIds', 'limitCommunesIds', 'distanceRecherche', 'isCertifier', 'startDatetime', 'endDatetime', 'avancee'], 'safe']
+            [['keyword' , 'scope' , 'userlat' , 'userlong' , 'isnewSearch', 'page', 'limitSpaceGuids', 'limitTypesIds' ,'limitActivitesIds', 'limitCategoriesIds', 'limitCommunesIds', 'distanceRecherche', 'isCertifier', 'startDatetime', 'endDatetime', 'avancee'], 'safe']
         ];
     }
 

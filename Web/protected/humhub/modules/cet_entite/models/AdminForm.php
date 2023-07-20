@@ -45,13 +45,14 @@ class AdminForm extends Model
         $this->tags = $this->entite->getEntiteTags()->all();
     }
 
-    public function setTags($tags){
+    public function setTags($tags)
+    {
         EntiteTag::attach($this->entite, $tags);
     }
     public function getNomDusage()
     {
         $nomDusage = "";
-        $infossupplementaire = $this->entite->getInfossupplementaires()->andWhere(["nom" => "admNomDusage"])->one();
+        $infossupplementaire = Infossupplementaires::findOne(["nom" => "admNomDusage"]);
         if (isset($infossupplementaire) && $infossupplementaire->nom == "admNomDusage") {
             $infossupplementaireValeur = $infossupplementaire->getInfossupplementairesValeurs()
                 ->andWhere(["cet_entite_id" => $this->entite->id, "pk_cet_infos_supplementaires" => $infossupplementaire->id])->one();
@@ -67,7 +68,7 @@ class AdminForm extends Model
     }
     public function setNomDusage($newNomDusage)
     {
-        $infossupplementaire = $this->entite->getInfossupplementaires()->andWhere(["nom" => "admNomDusage"])->one();
+        $infossupplementaire = Infossupplementaires::findOne(["nom" => "admNomDusage"]);
         if (isset($infossupplementaire) && $infossupplementaire->nom == "admNomDusage") {
             $infossupplementaireValeur = $infossupplementaire->getInfossupplementairesValeurs()
                 ->andWhere(["cet_entite_id" => $this->entite->id, "pk_cet_infos_supplementaires" => $infossupplementaire->id])->one();
@@ -80,6 +81,10 @@ class AdminForm extends Model
                 $newInfossupplementaireValeur->cet_entite_id = $this->entite->id;
                 $newInfossupplementaireValeur->pk_cet_infos_supplementaires = $infossupplementaire->id;
                 if ($newInfossupplementaireValeur->save(false)) {
+                    $newJoinInfosupplementaireEntite = new Joininfossupplementairesentite();
+                    $newJoinInfosupplementaireEntite->cet_entite_id = $this->entite->id;
+                    $newJoinInfosupplementaireEntite->cet_infos_supplementaires_id = $infossupplementaire->id;
+                    $newJoinInfosupplementaireEntite->save(false);
                 }
             }
         } else {
@@ -97,7 +102,6 @@ class AdminForm extends Model
             $newInfossupplementaireValeur->cet_entite_id = $this->entite->id;
             $newInfossupplementaireValeur->pk_cet_infos_supplementaires = $newInfossupplementaire->id;
             if ($newInfossupplementaireValeur->save(false)) {
-
             }
         }
         $this->nomDusage = $newNomDusage;
@@ -105,7 +109,7 @@ class AdminForm extends Model
     public function getAdresse()
     {
         $Adresse = "";
-        $infossupplementaire = $this->entite->getInfossupplementaires()->andWhere(["nom" => "admAdresse"])->one();
+        $infossupplementaire = Infossupplementaires::findOne(["nom" => "admAdresse"]);
         if (isset($infossupplementaire) && $infossupplementaire->nom == "admAdresse") {
             $infossupplementaireValeur = $infossupplementaire->getInfossupplementairesValeurs()
                 ->andWhere(["cet_entite_id" => $this->entite->id, "pk_cet_infos_supplementaires" => $infossupplementaire->id])->one();
@@ -121,7 +125,7 @@ class AdminForm extends Model
     }
     public function setAdresse($newAdresse)
     {
-        $infossupplementaire = $this->entite->getInfossupplementaires()->andWhere(["nom" => "admnewAdresse"])->one();
+        $infossupplementaire = Infossupplementaires::findOne(["nom" => "admnewAdresse"]);
         if (isset($infossupplementaire) && $infossupplementaire->nom == "admnewAdresse") {
             $infossupplementaireValeur = $infossupplementaire->getInfossupplementairesValeurs()
                 ->andWhere(["cet_entite_id" => $this->entite->id, "pk_cet_infos_supplementaires" => $infossupplementaire->id])->one();
@@ -132,8 +136,12 @@ class AdminForm extends Model
                 $newInfossupplementaireValeur = new Infossupplementairesvaleur();
                 $newInfossupplementaireValeur->valeur = $newAdresse;
                 $newInfossupplementaireValeur->cet_entite_id = $this->entite->id;
-                $newInfossupplementaireValeur->pk_cet_infos_supplementaires = $newInfossupplementaire->id;
+                $newInfossupplementaireValeur->pk_cet_infos_supplementaires = $infossupplementaire->id;
                 if ($newInfossupplementaireValeur->save(false)) {
+                    $newJoinInfosupplementaireEntite = new Joininfossupplementairesentite();
+                    $newJoinInfosupplementaireEntite->cet_entite_id = $this->entite->id;
+                    $newJoinInfosupplementaireEntite->cet_infos_supplementaires_id = $infossupplementaire->id;
+                    $newJoinInfosupplementaireEntite->save(false);
                 }
             }
         } else {
@@ -158,7 +166,7 @@ class AdminForm extends Model
     public function getTelephone()
     {
         $telephone = "";
-        $infossupplementaire = $this->entite->getInfossupplementaires()->andWhere(["nom" => "admTelephone"])->one();
+        $infossupplementaire = Infossupplementaires::findOne(["nom" => "admTelephone"]);
         if (isset($infossupplementaire) && $infossupplementaire->nom == "admTelephone") {
             $infossupplementaireValeur = $infossupplementaire->getInfossupplementairesValeurs()
                 ->andWhere(["cet_entite_id" => $this->entite->id, "pk_cet_infos_supplementaires" => $infossupplementaire->id])->one();
@@ -174,7 +182,7 @@ class AdminForm extends Model
     }
     public function setTelephone($newTelephone)
     {
-        $infossupplementaire = $this->entite->getInfossupplementaires()->andWhere(["nom" => "admTelephone"])->one();
+        $infossupplementaire = Infossupplementaires::findOne(["nom" => "admTelephone"]);
         if (isset($infossupplementaire) && $infossupplementaire->nom == "admTelephone") {
             $infossupplementaireValeur = $infossupplementaire->getInfossupplementairesValeurs()
                 ->andWhere(["cet_entite_id" => $this->entite->id, "pk_cet_infos_supplementaires" => $infossupplementaire->id])->one();
@@ -187,6 +195,10 @@ class AdminForm extends Model
                 $newInfossupplementaireValeur->cet_entite_id = $this->entite->id;
                 $newInfossupplementaireValeur->pk_cet_infos_supplementaires = $infossupplementaire->id;
                 if ($newInfossupplementaireValeur->save(false)) {
+                    $newJoinInfosupplementaireEntite = new Joininfossupplementairesentite();
+                    $newJoinInfosupplementaireEntite->cet_entite_id = $this->entite->id;
+                    $newJoinInfosupplementaireEntite->cet_infos_supplementaires_id = $infossupplementaire->id;
+                    $newJoinInfosupplementaireEntite->save(false);
                 }
             }
         } else {
@@ -211,16 +223,19 @@ class AdminForm extends Model
     public function getEmail()
     {
         $email = "";
-        $infossupplementaire = $this->entite->getInfossupplementaires()->andWhere(["nom" => "admEmail"])->one();
+        $infossupplementaire = Infossupplementaires::findOne(["nom" => "admEmail"]);
         if (isset($infossupplementaire) && $infossupplementaire->nom == "admEmail") {
             $infossupplementaireValeur = $infossupplementaire->getInfossupplementairesValeurs()
                 ->andWhere(["cet_entite_id" => $this->entite->id, "pk_cet_infos_supplementaires" => $infossupplementaire->id])->one();
             if ($infossupplementaireValeur) {
+                //print("on passe la valeur existante");
                 $email = $infossupplementaireValeur->valeur;
             } else {
+                //print("on passe la valeur de l'entite");
                 $email = $this->entite->email ? $this->entite->email : "";
             }
         } else {
+            //print("on passe la valeur de l'entite car l'infosupp n'a pas été trouvé");
             $email = $this->entite->email ? $this->entite->email : "";
             //print("on get info supp vide");
         }
@@ -230,14 +245,17 @@ class AdminForm extends Model
     {
 
         $infossupplementaire = Infossupplementaires::findOne(["nom" => "admEmail"]);
+        //si infossupplementaire email existe
         if (isset($infossupplementaire) && $infossupplementaire->nom == "admEmail") {
             $infossupplementaireValeur = Infossupplementairesvaleur::findOne(["cet_entite_id" => $this->entite->id, "pk_cet_infos_supplementaires" => $infossupplementaire->id]);
+            //Si la valeur de l'infos supplémentaire existe
             if ($infossupplementaireValeur) {
+                //On update
                 $infossupplementaireValeur->valeur = $newEmail;
                 //print($infossupplementaireValeur->valeur);
                 if ($infossupplementaireValeur->save(false)) {
                     //print("Save normalement réussi : ".var_dump($infossupplementaireValeur));
-                }else{
+                } else {
                     //print($infossupplementaireValeur->valeur);
                 }
             } else {
@@ -246,6 +264,11 @@ class AdminForm extends Model
                 $newInfossupplementaireValeur->cet_entite_id = $this->entite->id;
                 $newInfossupplementaireValeur->pk_cet_infos_supplementaires = $infossupplementaire->id;
                 if ($newInfossupplementaireValeur->save(false)) {
+                    //print("Infos supplementaire email enregistrée");
+                    $newJoinInfosupplementaireEntite = new Joininfossupplementairesentite();
+                    $newJoinInfosupplementaireEntite->cet_entite_id = $this->entite->id;
+                    $newJoinInfosupplementaireEntite->cet_infos_supplementaires_id = $infossupplementaire->id;
+                    $newJoinInfosupplementaireEntite->save(false);
                 }
             }
         } else {
@@ -273,26 +296,29 @@ class AdminForm extends Model
     public function getSiteweb()
     {
         $siteweb = "";
-        $infossupplementaire = $this->entite->getInfossupplementaires()->andWhere(["nom" => "admSiteWeb"])->one();
+        $infossupplementaire = Infossupplementaires::findOne(["nom" => "admSiteWeb"]);
         if (isset($infossupplementaire) && $infossupplementaire->nom == "admSiteWeb") {
-            $infossupplementaireValeur = $infossupplementaire->getInfossupplementairesValeurs()
-                ->andWhere(["cet_entite_id" => $this->entite->id, "pk_cet_infos_supplementaires" => $infossupplementaire->id])->one();
+            //print("pk_cet_infos_supplementaires = " . $infossupplementaire->id . " entite id = " . $this->entite->id );
+            $infossupplementaireValeur = Infossupplementairesvaleur::findOne(["cet_entite_id" => $this->entite->id, "pk_cet_infos_supplementaires" => $infossupplementaire->id]);
+            //print(var_dump($infossupplementaireValeur));
             if ($infossupplementaireValeur) {
+                //print('on attribut la valeur infosupp');
                 $siteweb = $infossupplementaireValeur->valeur;
             } else {
-                $siteweb = $this->entite->sitewebs[0]->url ? $this->entite->sitewebs[0]->url : "";
+                //print("on ne trouve pas la valeur on met l'ancien site web ou vide");
+                $siteweb = isset($this->entite->sitewebs[0]->url) ? $this->entite->sitewebs[0]->url : "";
             }
         } else {
+            //print("on ne trouve pas l'infosupp on met l'ancien site web ou vide");
             $siteweb = isset($this->entite->sitewebs[0]->url) ? $this->entite->sitewebs[0]->url : "";
         }
         return $siteweb;
     }
     public function setSiteweb($newSiteWeb)
     {
-        $infossupplementaire = $this->entite->getInfossupplementaires()->andWhere(["nom" => "admSiteWeb"])->one();
+        $infossupplementaire = Infossupplementaires::findOne(["nom" => "admSiteWeb"]);
         if (isset($infossupplementaire) && $infossupplementaire->nom == "admSiteWeb") {
-            $infossupplementaireValeur = $infossupplementaire->getInfossupplementairesValeurs()
-                ->andWhere(["cet_entite_id" => $this->entite->id, "pk_cet_infos_supplementaires" => $infossupplementaire->id])->one();
+            $infossupplementaireValeur = Infossupplementairesvaleur::findOne(["cet_entite_id" => $this->entite->id, "pk_cet_infos_supplementaires" => $infossupplementaire->id]);
             if ($infossupplementaireValeur) {
                 $infossupplementaireValeur->valeur = $newSiteWeb;
                 $infossupplementaireValeur->save(false);
@@ -301,6 +327,11 @@ class AdminForm extends Model
                 $newInfossupplementaireValeur->valeur = $newSiteWeb;
                 $newInfossupplementaireValeur->cet_entite_id = $this->entite->id;
                 $newInfossupplementaireValeur->pk_cet_infos_supplementaires = $infossupplementaire->id;
+                $newInfossupplementaireValeur->save(false);
+                $newJoinInfosupplementaireEntite = new Joininfossupplementairesentite();
+                $newJoinInfosupplementaireEntite->cet_entite_id = $this->entite->id;
+                $newJoinInfosupplementaireEntite->cet_infos_supplementaires_id = $infossupplementaire->id;
+                $newJoinInfosupplementaireEntite->save(false);
             }
         } else {
             $newInfossupplementaire = new Infossupplementaires();
