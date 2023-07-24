@@ -41,6 +41,13 @@ Vérifier par le siret si le producteur est éxistant {
 
 ## Sauvegarder les modification impacter par les MAJ humhub
 
+## Tableau mettre les infos supplémentaires prioritaire
+
+## l'email ne se modifie pas 
+
+## Nom d'usage => nom Commerciale n'est pas pris en compte dans la recherche
+
+## Zones étiquettes
 
 ## Appeler la recherche qu'une fois
 
