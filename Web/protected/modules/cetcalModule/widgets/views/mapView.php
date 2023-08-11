@@ -19,6 +19,7 @@ MapAssetBundle::register($this);
 <script src="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js"></script>
 <script src='assets/leaflet.fullscreen-master/Control.Fullscreen.js'></script>
 <script src='assets/leaflet.fullscreen-master/Control.Fullscreen.css'></script>
+
 <?php if ($showAsPanel) { ?>
 
     <div class="panel" id="adresseCetmap-map-view-snippet">
@@ -34,7 +35,7 @@ MapAssetBundle::register($this);
         <div id="adresseCet-main-map-link" style="height: <?= $height ?>;">
             <div id="adresseCet-main-map" style="height: 100%;"></div>
         </div>
-
+        <script src="/static/js/const/const.js"></script>
         <script <?= Html::nonce() ?>>
             $(document).ready(function() {
                 accessToken = "<?= $apikey ?>";
@@ -494,7 +495,7 @@ MapAssetBundle::register($this);
                             icon: icon_carto
                         });
                         // A MODIFIER URL PROD
-                        marker.bindPopup('<b>' + adresseCet.name + '</b><br>' + adresseCet.type + '<br>' + '<a href="http://localhost:9081/index.php?r=cet_entite%2Fdetail&id=' + adresseCet.id + '" target="_blank"> détail </a>');
+                        marker.bindPopup('<b>' + adresseCet.name + '</b><br>' + adresseCet.type + '<br>' + '<a href="'+nomdedomaine+'/index.php?r=cet_entite%2Fdetail&id=' + adresseCet.id + '" target="_blank"> détail </a>');
                         markers.addLayer(marker);
                     }
                 });
