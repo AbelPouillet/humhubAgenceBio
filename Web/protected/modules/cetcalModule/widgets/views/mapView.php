@@ -495,7 +495,7 @@ MapAssetBundle::register($this);
                             icon: icon_carto
                         });
                         // A MODIFIER URL PROD
-                        marker.bindPopup('<b>' + adresseCet.name + '</b><br>' + adresseCet.type + '<br>' + '<a href="'+nomdedomaine+'/index.php?r=cet_entite%2Fdetail&id=' + adresseCet.id + '" target="_blank"> détail </a>');
+                        marker.bindPopup('<b>' + adresseCet.name + '</b><br>' + adresseCet.type + '<br>' + '<a href="'+ nomdedomaine + '/index.php?r=cet_entite%2Fdetail&id=' + adresseCet.id + '" target="_blank"> détail </a>');
                         markers.addLayer(marker);
                     }
                 });

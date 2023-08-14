@@ -21,7 +21,7 @@ class Events
                 '/search/search/getlocalisation'
             ]),
             'sortOrder' => 99999,
-            'isActive' => (Yii::$app->controller->module && Yii::$app->controller->module->id == 'cetcalModule'),
+            //'isActive' => (Yii::$app->controller->module && Yii::$app->controller->module->id == 'cetcalModule'),
         ]);
     }
 
